@@ -1,0 +1,19 @@
+<style id="eaBackCss">
+#eaBack{position:fixed;z-index:2147483000;top:calc(env(safe-area-inset-top,0px) + 10px);left:10px;display:flex;align-items:center;gap:4px;
+min-height:42px;padding:0 16px 0 12px;border:0;border-radius:22px;background:rgba(20,12,14,.55);color:#fff;font:600 14px/1 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 6px 18px rgba(0,0,0,.28);cursor:pointer;-webkit-tap-highlight-color:transparent}
+#eaBack svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#eaBack:active{transform:scale(.95)}
+@media print{#eaBack{display:none}}
+</style>
+<button id="eaBack" type="button" aria-label="Back to WhatsApp"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Back</button>
+<script>(function(){
+if(window.self!==window.top)return;                       /* never inside a preview frame */
+var b=document.getElementById('eaBack');if(!b)return;
+b.addEventListener('click',function(){
+  try{var d=document;if(d.fullscreenElement||d.webkitFullscreenElement){(d.exitFullscreen||d.webkitExitFullscreen).call(d);}}catch(e){}
+  history.back();                                            /* 1. go back to the chat where the link was tapped */
+  setTimeout(function(){if(document.hidden)return;try{window.close();}catch(e){}   /* 2. nothing to go back to: close the tab */
+    setTimeout(function(){if(!document.hidden)location.href='https://wa.me/';},300);},350);   /* 3. last resort: open WhatsApp */
+});
+})();</script>

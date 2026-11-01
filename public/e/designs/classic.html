@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" style="{% for k, c in v.theme.items() %}--{{ k }}:{{ c }};{% endfor %}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ v.title }}</title>
+<meta name="description" content="{{ v.description }}">
+<meta name="theme-color" content="{{ v.theme['cover-bg'] }}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ v.og_title or v.title }}">
+<meta property="og:description" content="{{ v.description }}">
+{% if v.page_url %}<meta property="og:url" content="{{ v.page_url }}">{% endif %}
+{% if v.og_image %}<meta property="og:image" content="{{ v.og_image }}">{% endif %}
+<link rel="preload" href="/cards/fonts/CormorantGaramond%5Bwght%5D.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+@font-face{font-family:"Cormorant Garamond";src:url(/cards/fonts/CormorantGaramond%5Bwght%5D.ttf) format("truetype");font-weight:300 700;font-style:normal;font-display:swap}
+@font-face{font-family:"Cormorant Garamond";src:url(/cards/fonts/CormorantGaramond-Italic%5Bwght%5D.ttf) format("truetype");font-weight:300 700;font-style:italic;font-display:swap}
+@font-face{font-family:"Montserrat";src:url(/cards/fonts/Montserrat%5Bwght%5D.ttf) format("truetype");font-weight:100 900;font-style:normal;font-display:swap}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:400 1rem/1.65 "Montserrat","Noto Sans Telugu","Nirmala UI",system-ui,sans-serif}
+body.locked{overflow:hidden}
+.serif,h1,h2,.day,.host{font-family:"Cormorant Garamond","Noto Serif Telugu","Nirmala UI",Georgia,serif}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.cover :focus-visible{outline-color:var(--cover-ink)}
+.wrap{max-width:34rem;margin:0 auto;padding:0 1.35rem}
+
+/* the one moment: the doors */
+.cover{position:fixed;inset:0;z-index:10;color:var(--cover-ink);display:grid;place-items:center;text-align:center;padding:2rem 1.5rem}
+.cover[hidden]{display:none}
+.door{position:absolute;top:0;bottom:0;width:50.5%;background:var(--cover-bg);transition:transform 1.05s cubic-bezier(.77,0,.18,1)}
+.door.l{left:0;box-shadow:inset -2px 0 0 color-mix(in srgb,var(--cover-ink) 35%,transparent)}
+.door.r{right:0;box-shadow:inset 2px 0 0 color-mix(in srgb,var(--cover-ink) 35%,transparent)}
+.cover.open .door.l{transform:translateX(-101%)}
+.cover.open .door.r{transform:translateX(101%)}
+.cover-inner{position:relative;max-width:26rem;transition:opacity .35s}
+.cover.open .cover-inner{opacity:0;pointer-events:none}
+.cover h1{font-size:clamp(2.7rem,13vw,4.6rem);margin:0 0 .6rem;font-weight:600}
+.cover .host{font-style:italic;font-size:1.4rem;margin:0 0 1.6rem}
+.cover .date{margin:0 0 2.2rem;font-weight:500}
+.open-btn{font:600 1rem "Montserrat",system-ui,sans-serif;color:var(--cover-bg);background:var(--cover-ink);border:0;border-radius:2rem;padding:.95rem 2rem;min-height:3rem;cursor:pointer}
+
+/* invitation */
+.hero{padding:3.2rem 0 1.6rem}
+h1.title{font-size:clamp(2.7rem,12vw,4.2rem);margin:0 0 .5rem;font-weight:600;overflow-wrap:anywhere}
+.host{font-style:italic;font-size:1.4rem;margin:0;color:var(--muted)}
+.when{display:grid;grid-template-columns:auto 1fr;gap:0 1.2rem;align-items:end;padding:1.6rem 0 .4rem}
+.day{font-size:5.6rem;line-height:.8;font-weight:600}
+.when .parts{padding-bottom:.2rem}
+.when b{display:block;font-size:1.1rem;font-weight:600}
+.when span{display:block;color:var(--muted)}
+.count{margin:.9rem 0 0;color:var(--muted);min-height:1.65em}
+.where{padding:1.4rem 0 0}
+.where h2{margin:0;font-size:1.9rem;line-height:1.15;font-weight:600}
+.where p{margin:.2rem 0 0;color:var(--muted)}
+.links{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.1rem 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:3rem;padding:.7rem 1.3rem;border-radius:.6rem;border:2px solid var(--accent);color:var(--accent);background:transparent;font:600 .95rem "Montserrat",system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn.solid{background:var(--accent);color:var(--accent-ink)}
+.know{margin:2rem 0 0;padding:0}
+.know div{display:grid;grid-template-columns:7.2rem 1fr;gap:.2rem 1rem;padding:.8rem 0;border-top:1px solid var(--line)}
+.know div:last-child{border-bottom:1px solid var(--line)}
+.know dt{color:var(--muted);font-weight:500}
+.know dd{margin:0;overflow-wrap:anywhere}
+.rsvp{padding:3rem 0 4rem}
+.rsvp h2{font-size:2.3rem;margin:0 0 1.2rem;font-weight:600;line-height:1.1}
+.field{margin:0 0 1.15rem}
+.field>label,legend{display:block;font-weight:600;margin:0 0 .4rem;padding:0}
+fieldset{border:0;margin:0 0 1.15rem;padding:0;min-width:0}
+input[type=text],input[type=tel]{width:100%;font:inherit;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:.6rem;padding:.8rem .9rem;min-height:3rem}
+input[type=text]:focus-visible,input[type=tel]:focus-visible{outline-offset:1px;border-color:var(--accent)}
+.phone{display:flex;gap:.5rem;align-items:stretch}
+.phone .cc{display:grid;place-items:center;padding:0 .9rem;background:var(--tint);border-radius:.6rem;font-weight:600}
+.hint{display:block;color:var(--muted);font-size:.9rem;margin-top:.3rem}
+.err{display:block;color:#B3261E;font-weight:500;font-size:.92rem;margin-top:.3rem;min-height:0}
+.choices{display:grid;gap:.6rem}
+.choice{position:relative}
+.choice input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.choice span{display:flex;align-items:center;min-height:3.2rem;padding:.6rem 1rem;border:2px solid var(--line);border-radius:.6rem;background:#fff;font-weight:600}
+.choice input:checked+span{border-color:var(--accent);background:var(--tint)}
+.choice input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.choices.row{grid-template-columns:repeat(3,1fr)}
+.choices.row span{justify-content:center;text-align:center;padding:.6rem .3rem}
+.stepper{display:flex;align-items:center;gap:.8rem;margin:0 0 .8rem}
+.stepper .lbl{flex:1;font-weight:600}
+.stepper button{width:3rem;height:3rem;border-radius:50%;border:2px solid var(--accent);background:transparent;color:var(--accent);font:600 1.4rem/1 "Montserrat",system-ui,sans-serif;cursor:pointer}
+.stepper output{min-width:2rem;text-align:center;font-weight:600;font-size:1.2rem}
+[hidden]{display:none!important}
+.send{width:100%;margin-top:.4rem;font-size:1.05rem;min-height:3.4rem}
+.send[disabled]{opacity:.6;cursor:wait}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.closed{padding:1.1rem 1.2rem;background:var(--tint);border-radius:.6rem;font-weight:600}
+.done h2{margin-bottom:.6rem}
+.pass{margin:1.2rem 0;padding:1rem;background:#fff;border:2px solid var(--line);border-radius:.8rem;text-align:center}
+.pass img{display:block;width:100%;max-width:20rem;height:auto;margin:0 auto .6rem;border-radius:.4rem}
+.pass .no{font-weight:700;font-size:1.15rem}
+.foot{padding:0 0 2.5rem;color:var(--muted);font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.door,.cover-inner{transition:none}}
+</style>
+<noscript><style>.cover{display:none}body.locked{overflow:auto}</style></noscript>
+</head>
+<body class="locked">
+
+<section class="cover" id="cover" aria-label="Invitation cover">
+  <div class="door l"></div><div class="door r"></div>
+  <div class="cover-inner">
+    <h1>{{ v.title }}</h1>
+    {% if v.host %}<p class="host">{{ v.host }} invites you</p>{% endif %}
+    {% if v.has_date %}<p class="date">{{ v.weekday }}, {{ v.day }} {{ v.month_year }}</p>{% elif v.date_text %}<p class="date">{{ v.date_text }}</p>{% endif %}
+    <button class="open-btn" id="open" type="button">Open the invitation</button>
+  </div>
+</section>
+
+<main class="wrap">
+  <header class="hero">
+    <h1 class="title">{{ v.title }}</h1>
+    {% if v.host %}<p class="host">Hosted by {{ v.host }}</p>{% endif %}
+    {% if v.has_date %}
+    <div class="when">
+      <div class="day" aria-hidden="true">{{ v.day }}</div>
+      <div class="parts"><b>{{ v.weekday }}</b><span>{{ v.month_year }}</span><span>{{ v.time }}</span></div>
+    </div>
+    <p class="count" id="count" data-start="{{ v.starts_iso }}" aria-live="polite"></p>
+    {% elif v.date_text %}
+    <p class="when"><b>{{ v.date_text }}</b></p>
+    {% endif %}
+  </header>
+
+  {% if v.venue_name or v.maps %}
+  <section class="where" aria-label="Venue">
+    {% if v.venue_name %}<h2>{{ v.venue_name }}</h2>{% endif %}
+    {% if v.venue_addr %}<p>{{ v.venue_addr }}</p>{% endif %}
+    <div class="links">
+      {% if v.maps %}<a class="btn" href="{{ v.maps }}" target="_blank" rel="noopener">Open in Google Maps</a>{% endif %}
+      {% if v.calendar %}<a class="btn" href="{{ v.calendar }}" target="_blank" rel="noopener">Add to calendar</a>{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if v.extras %}
+  <dl class="know">
+    {% for label, value in v.extras %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}
+  </dl>
+  {% endif %}
+
+  <section class="rsvp" id="rsvp">
+    <h2 id="ask">Will you come?</h2>
+    {% if v.closed %}
+    <p class="closed">{{ v.closed_msg }}</p>
+    {% else %}
+    <form id="form" novalidate action="/e/{{ v.code }}/rsvp" method="post">
+      <p class="field"><label for="name">Your name</label>
+        <input id="name" type="text" name="name" autocomplete="name" maxlength="40" required>
+        <span class="err" data-for="name" role="alert"></span></p>
+      <p class="field"><label for="phone">WhatsApp number</label>
+        <span class="phone"><span class="cc">+{{ v.cc }}</span><input id="phone" type="tel" name="phone" inputmode="numeric" autocomplete="tel-national" maxlength="14" required></span>
+        <span class="hint">Your pass is sent to this number.</span>
+        <span class="err" data-for="phone" role="alert"></span></p>
+
+      <fieldset class="choices row"><legend class="sr" style="position:absolute;left:-9999px">Your reply</legend>
+        <label class="choice"><input type="radio" name="answer" value="yes"><span>Yes</span></label>
+        <label class="choice"><input type="radio" name="answer" value="maybe"><span>Maybe</span></label>
+        <label class="choice"><input type="radio" name="answer" value="no"><span>Can't</span></label>
+      </fieldset>
+      <span class="err" data-for="answer" role="alert"></span>
+
+      <div id="yes-fields" hidden>
+        <div class="stepper" data-field="adults" data-min="1"><span class="lbl" id="l-ad">Adults, including you</span>
+          <button type="button" data-d="-1" aria-label="Fewer adults">&minus;</button><output aria-labelledby="l-ad">1</output><button type="button" data-d="1" aria-label="More adults">+</button></div>
+        <div class="stepper" data-field="kids" data-min="0"><span class="lbl" id="l-ki">Children</span>
+          <button type="button" data-d="-1" aria-label="Fewer children">&minus;</button><output aria-labelledby="l-ki">0</output><button type="button" data-d="1" aria-label="More children">+</button></div>
+        <span class="err" data-for="adults" role="alert"></span>
+        <fieldset class="choices row"><legend>Food</legend>
+          <label class="choice"><input type="radio" name="meal" value="veg"><span>Veg</span></label>
+          <label class="choice"><input type="radio" name="meal" value="nonveg"><span>Non-Veg</span></label>
+          <label class="choice"><input type="radio" name="meal" value="both"><span>Both</span></label>
+        </fieldset>
+        <span class="err" data-for="meal" role="alert"></span>
+      </div>
+
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn solid send" id="send" type="submit">Send my reply</button>
+      <p class="err" data-for="_" role="alert"></p>
+    </form>
+    <div class="done" id="done" hidden tabindex="-1"></div>
+    {% endif %}
+  </section>
+  <p class="foot">Made with EventAgent</p>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cover = document.getElementById('cover'), openBtn = document.getElementById('open');
+  function openDoors(){
+    cover.classList.add('open'); document.body.classList.remove('locked');
+    setTimeout(function(){ cover.hidden = true; window.scrollTo(0,0); }, reduce ? 0 : 1100);
+  }
+  openBtn.addEventListener('click', openDoors); openBtn.focus();
+
+  var cEl = document.getElementById('count');
+  if (cEl && cEl.dataset.start){
+    var t = new Date(cEl.dataset.start);
+    var tick = function(){
+      var ms = t - new Date();
+      if (isNaN(ms)) return;
+      if (ms <= 0){ cEl.textContent = 'The event has started.'; return; }
+      var d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4);
+      cEl.textContent = d > 0 ? d + (d==1?' day ':' days ') + h + (h==1?' hour':' hours') + ' to go'
+                              : h + (h==1?' hour ':' hours ') + m + ' min to go';
+    };
+    tick(); setInterval(tick, 30000);
+  }
+
+  var form = document.getElementById('form'), ask = document.getElementById('ask');
+  if (!form) return;
+  var yes = document.getElementById('yes-fields'), send = document.getElementById('send');
+  var LABEL = {yes:'Confirm and get my pass', maybe:'Save my reply', no:'Send my reply'};
+  var counts = {adults:1, kids:0};
+  function val(n){ var r = form.querySelector('input[name="'+n+'"]:checked'); return r ? r.value : ''; }
+  function showErr(errors){
+    form.querySelectorAll('.err').forEach(function(e){ e.textContent = (errors && errors[e.dataset.for]) || ''; });
+    var first = errors && Object.keys(errors)[0];
+    if (first && first !== '_'){ var f = form.querySelector('[name="'+first+'"]'); if (f) f.focus(); }
+  }
+  form.addEventListener('change', function(e){
+    if (e.target.name === 'answer'){ yes.hidden = e.target.value !== 'yes'; send.textContent = LABEL[e.target.value] || LABEL.no; }
+  });
+  form.querySelectorAll('.stepper').forEach(function(s){
+    var f = s.dataset.field, min = +s.dataset.min, out = s.querySelector('output');
+    s.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if (!b) return;
+      counts[f] = Math.max(min, Math.min(50, counts[f] + (+b.dataset.d))); out.textContent = counts[f];
+    });
+  });
+  form.addEventListener('submit', function(e){
+    e.preventDefault(); showErr(null);
+    var body = {name: form.name.value, phone: form.phone.value, answer: val('answer'), adults: counts.adults, kids: counts.kids,
+                meal: val('meal'), website: form.website.value};
+    send.disabled = true;
+    ENFetch(form.action, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})
+      .then(function(r){ return r.json().then(function(j){ return j; }); })
+      .then(function(j){
+        send.disabled = false;
+        if (!j.ok){ showErr(j.errors || {_:'Something went wrong. Please try again.'}); return; }
+        done(j);
+      })
+      .catch(function(){ send.disabled = false; showErr({_:'No connection. Check your internet and try again.'}); });
+  });
+  function done(j){
+    var box = document.getElementById('done'), h = document.createElement('h2'), p = document.createElement('p');
+    if (j.status === 'yes'){
+      h.textContent = "You're registered"; p.textContent = j.people + (j.people==1?' person':' people') + ', ' + j.meal + '. We also sent your pass to WhatsApp (number ending ' + j.phone + ').';
+      if (j.title) h.textContent = j.title; if (j.msg) p.textContent = j.msg; box.append(h, p);
+      var pass = document.createElement('div'); pass.className = 'pass';
+      if (j.pass_url){ var im = document.createElement('img'); im.src = j.pass_url; im.alt = 'Entry pass for ' + j.name; pass.append(im); }
+      var no = document.createElement('div'); no.className = 'no'; no.textContent = 'Pass ' + j.pass_no; pass.append(no);
+      var hint = document.createElement('span'); hint.className = 'hint'; hint.textContent = 'Show this at the entrance.'; pass.append(hint);
+      box.append(pass);
+      if (j.pass_url){ var a = document.createElement('a'); a.className = 'btn solid'; a.href = j.pass_url; a.download = j.pass_no + '.jpg'; a.textContent = 'Save pass'; box.append(a); }
+    } else if (j.status === 'maybe'){
+      h.textContent = 'Reply saved'; p.textContent = 'Open this page again once you know, and choose Yes.'; if (j.title) h.textContent = j.title; if (j.msg) p.textContent = j.msg; box.append(h, p);
+    } else {
+      h.textContent = 'Thanks for telling us'; p.textContent = 'We will miss you. If your plans change, open this page again and choose Yes.'; if (j.title) h.textContent = j.title; if (j.msg) p.textContent = j.msg; box.append(h, p);
+    }
+    /* no 'Chat with us' button here: guests only open the link and reply. The thank-you arrives on WhatsApp by itself. */
+    var again = document.createElement('p'); var link = document.createElement('a'); link.href = ''; link.textContent = 'Change my reply'; link.className = 'btn'; link.style.marginTop = '1rem';
+    link.addEventListener('click', function(ev){ ev.preventDefault(); box.hidden = true; box.textContent = ''; form.hidden = false; ask.hidden = false; });
+    box.append(link);
+    form.hidden = true; ask.hidden = true; box.hidden = false; box.focus();
+    document.getElementById('rsvp').scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+  }
+})();
+</script>
+</body>
+</html>
