@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EventNest · Card & Pass</title>
+<style>
+  :root { --ink:#2b2b2b; --muted:#6b6259; --line:#e4dccd; --bg:#faf6ee; --card:#fff; --accent:#7a1f2b; --gold:#b0832f; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 18px 16px 6px; max-width: 1180px; margin: 0 auto; }
+  h1 { margin: 0; font-size: 20px; color: var(--accent); letter-spacing: .02em; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  main { max-width: 1180px; margin: 0 auto; padding: 12px 16px 40px; display: grid; gap: 18px; grid-template-columns: 340px 1fr; }
+  @media (max-width: 860px) { main { grid-template-columns: 1fr; } }
+  form { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-self: start; }
+  fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 10px; }
+  legend { font-weight: 600; color: var(--gold); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
+  label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  input, select { font: inherit; color: var(--ink); padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; width: 100%; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 11px 14px; cursor: pointer; background: var(--accent); color: #fff; }
+  button.ghost { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  .previews { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; align-self: start; align-items: start; }
+  @media (max-width: 560px) { .previews { grid-template-columns: 1fr; } }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; display: grid; gap: 10px; }
+  figure img { width: 100%; aspect-ratio: 2 / 3; object-fit: contain; border-radius: 8px; background: #eee6d6; }
+  figcaption { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  figcaption strong { flex: 1 1 100%; font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+  .status { min-height: 1.4em; color: var(--muted); font-size: 13px; }
+  .status.error { color: #b3261e; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Invitation card & guest pass</h1>
+  <p>The same designs as EventAgent, made in your browser. Download or share them straight to WhatsApp.</p>
+</header>
+<main>
+  <form id="f">
+    <fieldset>
+      <legend>Event</legend>
+      <label>Event name <input name="event" value="Wedding Celebration" required></label>
+      <label>Hosted by <input name="host" value="Ananya & Rohan" required></label>
+      <label>Date & time <input name="dateText" value="24 Jan 2027, 7:00 PM" required></label>
+      <label>Venue <input name="venue" value="Sri Lakshmi Gardens, Hyderabad"></label>
+      <label>Card style <select name="style" id="style"></select></label>
+    </fieldset>
+    <fieldset>
+      <legend>Guest pass</legend>
+      <label>Guest name <input name="guest" value="Suresh Reddy"></label>
+      <div class="row">
+        <label>Adults <input name="adults" type="number" min="0" max="50" value="2"></label>
+        <label>Kids <input name="kids" type="number" min="0" max="50" value="2"></label>
+      </div>
+      <div class="row">
+        <label>Meal <select name="meal"><option value="">—</option><option>Veg</option><option>Non-Veg</option><option>Both</option></select></label>
+        <label>Pass no. <input name="passNo" value="TA-WED-00001"></label>
+      </div>
+      <label>QR holds <input name="qrText" value="https://eventnest.netlify.app/gate/?p=TA-WED-00001"></label>
+    </fieldset>
+    <button type="submit">Make card & pass</button>
+    <div class="status" id="status" role="status"></div>
+  </form>
+
+  <section class="previews">
+    <figure>
+      <img id="cardImg" alt="Invitation card">
+      <figcaption><strong>Invitation card</strong>
+        <button class="ghost" data-action="download" data-target="card">Download</button>
+        <button data-action="share" data-target="card">Share</button></figcaption>
+    </figure>
+    <figure>
+      <img id="passImg" alt="Guest pass">
+      <figcaption><strong>Guest pass</strong>
+        <button class="ghost" data-action="download" data-target="pass">Download</button>
+        <button data-action="share" data-target="pass">Share</button></figcaption>
+    </figure>
+  </section>
+</main>
+
+<script type="module">
+import { makeCard, STYLES, themeFor } from './js/cards/invite-card.js';
+import { makePass } from './js/cards/pass-card.js';
+
+const form = document.getElementById('f');
+const status = document.getElementById('status');
+const styleSelect = document.getElementById('style');
+const images = { card: document.getElementById('cardImg'), pass: document.getElementById('passImg') };
+const files = {};
+
+styleSelect.append(new Option('Automatic (matches the event)', ''));
+Object.entries(STYLES).forEach(([key, s]) => styleSelect.append(new Option(s.label, key)));
+
+const say = (text, error = false) => { status.textContent = text; status.classList.toggle('error', error); };
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'event';
+
+async function build() {
+  const v = Object.fromEntries(new FormData(form));
+  const style = v.style || themeFor(v.event).style;
+  say('Drawing…');
+  try {
+    const [card, pass] = await Promise.all([
+      makeCard(v.host, v.event, v.dateText, v.venue, style),
+      makePass({ ...v, style })
+    ]);
+    const name = slug(v.event);
+    files.card = new File([card], `${name}-invitation.jpg`, { type: 'image/jpeg' });
+    files.pass = new File([pass], `${name}-pass-${slug(v.passNo)}.jpg`, { type: 'image/jpeg' });
+    for (const k of ['card', 'pass']) {
+      if (images[k].src) URL.revokeObjectURL(images[k].src);
+      images[k].src = URL.createObjectURL(files[k]);
+    }
+    say(`Style: ${STYLES[style].label}`);
+  } catch (e) {
+    say(e.message, true);
+  }
+}
+
+function download(file) {
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(file), download: file.name });
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+async function share(file) {
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file] }); } catch (e) { if (e.name !== 'AbortError') say(e.message, true); }
+  } else {
+    download(file);
+    say('This browser cannot share images directly – the image was downloaded; attach it in WhatsApp.');
+  }
+}
+
+form.addEventListener('submit', e => { e.preventDefault(); build(); });
+document.querySelectorAll('[data-action]').forEach(btn => btn.addEventListener('click', () => {
+  const file = files[btn.dataset.target];
+  if (!file) return;
+  (btn.dataset.action === 'share' ? share : download)(file);
+}));
+build();
+</script>
+</body>
+</html>

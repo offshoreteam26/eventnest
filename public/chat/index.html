@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#075E54">
+<title>EventNest · Chat</title>
+<meta name="description" content="Reply to your invitation, get your entry pass, or create your own event – in a simple chat.">
+<link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="avatar" aria-hidden="true">🎟️</div>
+    <div class="who"><strong id="title">EventNest</strong><span id="subtitle">online</span></div>
+    <button id="menu" class="icon" aria-label="Options" title="Options">⋮</button>
+  </header>
+  <div id="options" class="options" hidden>
+    <button data-send="MENU">🛠️ Host menu</button>
+    <button data-send="help">❓ What can I ask?</button>
+    <button data-send="START">✨ Create a new event</button>
+    <button id="switch">🔁 Use a different number</button>
+  </div>
+  <main id="chat" class="chat" aria-live="polite"></main>
+  <form id="composer" class="composer" autocomplete="off">
+    <input id="text" type="text" placeholder="Type a message" aria-label="Message" enterkeyhint="send">
+    <button class="send" aria-label="Send">➤</button>
+  </form>
+</div>
+<script type="module" src="/js/chat.js"></script>
+</body>
+</html>

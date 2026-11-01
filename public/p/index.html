@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#075E54">
+<title>Your entry pass · EventNest</title>
+<link rel="stylesheet" href="/css/chat.css">
+<style>
+  .passpage { max-width: 520px; margin: 0 auto; padding: 16px; display: grid; gap: 12px; }
+  .passpage img { width: 100%; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.15); background: #eee; aspect-ratio: 2 / 3; }
+  .passpage h1 { font-size: 18px; margin: 0; }
+  .passpage .chips { justify-content: center; max-width: none; }
+  .passpage .status { text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<main class="passpage">
+  <h1 id="title">Your entry pass</h1>
+  <p id="status" class="status" role="status">Loading your pass…</p>
+  <img id="pass" alt="" hidden>
+  <div id="actions" class="chips" hidden></div>
+</main>
+<script type="module">
+import { Api } from '/js/api.js';
+import { makePass } from '/js/cards/pass-card.js';
+const q = new URLSearchParams(location.search);
+const status = document.getElementById('status'), img = document.getElementById('pass'), actions = document.getElementById('actions');
+const link = (href, text, extra = {}) => Object.assign(document.createElement('a'), { href, textContent: text, target: '_blank', rel: 'noopener', ...extra });
+try {
+  const data = await Api.pass(q.get('p'), q.get('t'));
+  document.getElementById('title').textContent = data.event_name;
+  document.title = `Pass ${data.pass.passNo} · ${data.event_name}`;
+  const blob = await makePass(data.pass);
+  const url = URL.createObjectURL(blob);
+  const file = new File([blob], `pass-${data.pass.passNo}.jpg`, { type: 'image/jpeg' });
+  img.src = url; img.alt = `Entry pass ${data.pass.passNo}`; img.hidden = false;
+  status.textContent = data.checked_in ? '✅ Checked in – enjoy the event!' : 'Show this QR at the entry gate.';
+  actions.append(link(url, '⬇️ Download', { download: file.name, target: '' }));
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    const b = document.createElement('button'); b.textContent = '📤 Share'; b.onclick = () => navigator.share({ files: [file] }).catch(() => {});
+    actions.append(b);
+  }
+  if (data.maps) actions.append(link(data.maps, '📍 Directions'));
+  if (data.calendar) actions.append(link(data.calendar, '📅 Add to calendar'));
+  actions.hidden = false;
+} catch (err) {
+  status.textContent = '⚠️ ' + err.message;
+}
+</script>
+</body>
+</html>
