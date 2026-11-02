@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#111111">
+<title>Gate Check-in</title>
+<!-- EventAgent gate.py page: same look, same green / amber / red results. -->
+<style>
+ body{margin:0;font-family:system-ui,sans-serif;background:#111;color:#fff;text-align:center;padding:0 12px 24px}
+ h1{font-size:20px;margin:14px 0 4px} #count{color:#bbb;font-size:14px;margin-bottom:8px;min-height:1.2em}
+ video{width:100%;max-width:520px;background:#000;border-radius:12px}
+ video[hidden]{display:none}
+ #res{margin:12px auto;max-width:520px;padding:18px;border-radius:12px;font-size:20px;background:#333;min-height:70px}
+ #res.ok{background:#1b8a3a} #res.already{background:#c98a00} #res.bad{background:#b3261e}
+ #res b{font-size:26px;display:block;margin-bottom:4px}
+ button,input{font-size:18px;padding:12px;border-radius:10px;border:0;margin:4px}
+ input{width:55%} button{background:#e6b422;font-weight:700;color:#111;cursor:pointer}
+ .guest{max-width:520px;margin:30px auto;padding:22px;border-radius:14px;background:#1f1f1f;font-size:18px;line-height:1.5}
+ .guest b{display:block;font-size:24px;margin:6px 0}
+ .guest a{color:#e6b422}
+ [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<!-- Gate team view (opened with ?key=…) -->
+<div id="staff" hidden>
+  <h1>🎟️ Gate Check-in</h1><div id="count"></div>
+  <video id="v" playsinline muted hidden></video><canvas id="c" hidden></canvas>
+  <div><button id="start" type="button">📷 Start camera</button></div>
+  <div id="res" role="status" aria-live="polite">Show the guest's pass QR to the camera</div>
+  <form id="typed"><input id="code" placeholder="or type the pass no" autocomplete="off" autocapitalize="characters" aria-label="Pass number"><button type="submit">Check in</button></form>
+</div>
+
+<!-- A guest opened their own pass QR with the phone camera -->
+<div id="guest" class="guest" hidden>
+  <div style="font-size:42px">🎟️</div>
+  <b id="gpass"></b>
+  This is your entry pass.<br>Show this QR to the team at the entrance.
+</div>
+
+<!-- No key and no pass -->
+<div id="denied" class="guest" hidden>
+  <b>Not allowed</b>
+  Open the gate link from the host's <i>GATE</i> command (in the chat or the Google Sheet menu 🚪 Gate check-in link).
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script type="module">
+import { Api } from '/js/api.js';
+
+const STORE = 'eventnest.gate.key';
+const q = new URLSearchParams(location.search);
+const keep = { get() { try { return localStorage.getItem(STORE) || ''; } catch (e) { return ''; } },
+               set(v) { try { localStorage.setItem(STORE, v); } catch (e) { /* private mode: key stays in the link */ } },
+               clear() { try { localStorage.removeItem(STORE); } catch (e) { /* nothing saved */ } } };
+
+let KEY = q.get('key') || '';
+if (KEY) { keep.set(KEY); history.replaceState(null, '', location.pathname); }   // the secret leaves the address bar
+else KEY = keep.get();                                                             // this phone opened the gate link before
+
+const $ = id => document.getElementById(id);
+const v = $('v'), c = $('c'), res = $('res');
+let busy = false, last = '', lastAt = 0;
+
+function show(cls, big, small) {
+  res.className = cls;
+  res.replaceChildren(Object.assign(document.createElement('b'), { textContent: big }), Object.assign(document.createElement('span'), { textContent: small }));
+}
+
+async function startCam() {
+  try {
+    const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    v.srcObject = s; v.hidden = false; await v.play();
+    $('start').hidden = true;
+    requestAnimationFrame(tick);
+  } catch (e) {
+    show('bad', 'Camera not allowed', 'Allow the camera for this site, or type the pass no below.');
+  }
+}
+
+function tick() {
+  if (v.readyState === v.HAVE_ENOUGH_DATA && !busy && window.jsQR) {
+    const w = v.videoWidth, h = v.videoHeight; c.width = w; c.height = h;
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(v, 0, 0, w, h);
+    const code = window.jsQR(x.getImageData(0, 0, w, h).data, w, h, { inversionAttempts: 'dontInvert' });
+    if (code && code.data && !(code.data === last && Date.now() - lastAt < 4000)) { last = code.data; lastAt = Date.now(); send(code.data); }
+  }
+  requestAnimationFrame(tick);
+}
+
+async function send(text) {
+  busy = true;
+  try {
+    const d = await Api.gate(KEY, text);
+    if (d.status === 'ok') show('ok', '✅ ' + d.name, d.people + ' people · ' + (d.meal || '—') + ' · ' + d.pass);
+    else if (d.status === 'already') show('already', 'ℹ️ Already checked in', d.name + ' · ' + d.pass);
+    else show('bad', '❌ Pass not found', 'Check the pass number and try again.');
+    if (d.registered !== undefined) $('count').textContent = 'Checked in ' + d.checked_in + ' of ' + d.registered + ' registered';
+    if (navigator.vibrate) navigator.vibrate(d.status === 'ok' ? 120 : [80, 60, 80]);
+  } catch (e) {
+    if (e.status === 403) { keep.clear(); show('bad', 'Wrong or missing key', 'Open the link from the GATE command again.'); }
+    else show('bad', e.status ? e.message : 'No connection', e.status ? '' : 'Try again.');
+    if (navigator.vibrate) navigator.vibrate([80, 60, 80]);
+  }
+  setTimeout(() => { busy = false; }, 1800);
+}
+
+const pass = (q.get('p') || '').trim();
+if (KEY) {
+  $('staff').hidden = false;
+  $('start').addEventListener('click', startCam);
+  $('typed').addEventListener('submit', e => { e.preventDefault(); const t = $('code').value.trim(); if (t) { send(t); $('code').value = ''; } });
+  if (pass) { history.replaceState(null, '', location.pathname); send(pass); }      // the gate phone scanned a pass with its own camera app
+} else if (pass) {
+  $('gpass').textContent = 'Pass ' + pass.toUpperCase();
+  $('guest').hidden = false;
+} else {
+  $('denied').hidden = false;
+}
+</script>
+</body>
+</html>

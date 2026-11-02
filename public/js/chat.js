@@ -5,6 +5,7 @@
  *   /chat/?g=<guest>&t=<sig>    a guest's personal link
  *   /chat/?h=<phone>&t=<sig>    the host's private link
  *   /chat/?start=1              create a new event straight away
+ *   /chat/?text=ARRIVED%20X1    send this message once the chat opens (gate poster, website buttons)
  *   /chat/                      continue (this browser remembers you) or start fresh
  * ===================================================================== */
 import { Api } from './api.js';
@@ -193,9 +194,11 @@ const mask = p => '••••' + String(p).slice(-4);
 function afterOpen(replies) {
   const code = params.get('e');
   const start = params.get('start');
-  if (code || start || params.get('g') || params.get('h')) history.replaceState(null, '', location.pathname);
+  const say = (params.get('text') || '').trim().slice(0, 200);       // like wa.me/?text= : the gate poster (ARRIVED …) and the website buttons
+  if (code || start || say || params.get('g') || params.get('h')) history.replaceState(null, '', location.pathname);
   if (code) return send(`JOIN ${code}`, `JOIN ${code}`);
   if (start) return send('START');
+  if (say) return send(say);
   if (!replies.length) {
     showReply({ text: `Hi! 👋 I'm *EventNest*.\n\nInvited to an event? Open the link from your invitation.\nWant to host your own event? Tap *Create an event* — it takes 3 quick questions. 🎉`,
                 buttons: [{ id: 'START', title: '✨ Create an event' }, { id: 'help', title: '❓ Help' }] });

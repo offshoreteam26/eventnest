@@ -3,10 +3,28 @@
   publish = "public"
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- ."
 
+# WhatsApp / Facebook link previews of an invitation show the event's name, date and a picture
+# (only link-preview robots are answered by it; people get the normal page).
+[[edge_functions]]
+  path = "/e/*"
+  function = "invite-preview"
+
 # /e/<join code> = the animated invitation page (one page draws every event).
 [[redirects]]
   from = "/e/:code"
   to = "/e/index.html"
+  status = 200
+
+# /demo/<design> = free demo invitations (EventAgent demo.py)
+[[redirects]]
+  from = "/demo/:style"
+  to = "/demo/index.html"
+  status = 200
+
+# /pay/<PLAN> = tap-to-pay page (EventAgent app.py /pay/<plan>)
+[[redirects]]
+  from = "/pay/:plan"
+  to = "/pay/index.html"
   status = 200
 
 # The designs change when you push, so browsers always check for the latest copy.
@@ -20,3 +38,13 @@
   for = "/w/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Private pages are never listed by search engines.
+[[headers]]
+  for = "/gate/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+[[headers]]
+  for = "/host/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

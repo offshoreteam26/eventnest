@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#075E54">
+<title>How was the event? · EventNest</title>
+<link rel="stylesheet" href="/css/chat.css">
+<style>
+  .fb { max-width: 520px; margin: 0 auto; padding: 24px 16px 40px; display: grid; gap: 16px; }
+  .fb h1 { font-size: 22px; margin: 0; }
+  .fb p { margin: 0; color: var(--muted); }
+  .card { background: var(--bot); border-radius: 12px; padding: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.12); display: grid; gap: 14px; }
+  fieldset { border: 0; margin: 0; padding: 0; }
+  legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+  .stars { display: flex; gap: 6px; flex-direction: row-reverse; justify-content: flex-end; }
+  .stars input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .stars label { font-size: 40px; line-height: 1; cursor: pointer; color: #C9D1D5; transition: transform .1s; }
+  .stars label:hover, .stars label:hover ~ label, .stars input:checked ~ label { color: #F5B301; }
+  .stars input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .stars label:active { transform: scale(.9); }
+  .word { min-height: 1.4em; color: var(--muted); font-size: 14px; }
+  textarea { width: 100%; min-height: 110px; font: inherit; color: var(--ink); background: var(--page); border: 1px solid var(--line); border-radius: 10px; padding: 10px; resize: vertical; }
+  .send { font: 600 16px system-ui, sans-serif; background: var(--accent); color: #fff; border: 0; border-radius: 24px; padding: 13px; cursor: pointer; }
+  .send[disabled] { opacity: .6; cursor: wait; }
+  .err { color: #B3261E; font-size: 14px; min-height: 1.2em; }
+  .done { text-align: center; font-size: 18px; }
+  .done b { display: block; font-size: 44px; margin-bottom: 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="fb">
+  <div>
+    <h1 id="title">How was the event?</h1>
+    <p id="sub">Your feedback goes straight to the host.</p>
+  </div>
+  <form id="form" class="card" novalidate>
+    <fieldset>
+      <legend>Your rating</legend>
+      <div class="stars">
+        <input type="radio" name="rating" id="s5" value="5"><label for="s5" title="Excellent">★</label>
+        <input type="radio" name="rating" id="s4" value="4"><label for="s4" title="Good">★</label>
+        <input type="radio" name="rating" id="s3" value="3"><label for="s3" title="Okay">★</label>
+        <input type="radio" name="rating" id="s2" value="2"><label for="s2" title="Not great">★</label>
+        <input type="radio" name="rating" id="s1" value="1"><label for="s1" title="Poor">★</label>
+      </div>
+      <div class="word" id="word" aria-live="polite"></div>
+      <div class="err" data-for="rating" role="alert"></div>
+    </fieldset>
+    <label for="feedback"><strong>Anything you'd like to tell the host?</strong> <span style="color:var(--muted)">(optional)</span></label>
+    <textarea id="feedback" name="feedback" maxlength="500" placeholder="What did you enjoy? What could be better?"></textarea>
+    <button class="send" id="send" type="submit">Send feedback</button>
+    <div class="err" data-for="_" role="alert"></div>
+  </form>
+  <div id="done" class="card done" hidden tabindex="-1"></div>
+</main>
+<script type="module">
+import { Api } from '/js/api.js';
+const q = new URLSearchParams(location.search);
+const p = q.get('p') || '', t = q.get('t') || '', e = q.get('e') || '';
+const form = document.getElementById('form'), send = document.getElementById('send'), done = document.getElementById('done');
+const WORDS = { 1: 'Poor 😞', 2: 'Not great 😕', 3: 'Okay 🙂', 4: 'Good 😊', 5: 'Excellent 🤩' };
+const errors = (map = {}) => form.querySelectorAll('.err').forEach(x => { x.textContent = map[x.dataset.for] || ''; });
+
+if (!p || !t) {
+  form.hidden = true;
+  done.hidden = false;
+  done.textContent = 'This feedback link is not complete. Please open the link from your message again.';
+}
+if (e) Api.invitation(e).then(d => {
+  document.getElementById('title').textContent = `How was ${d.v.title}?`;
+  document.title = `Feedback · ${d.v.title}`;
+}).catch(() => { /* the generic title stays */ });
+
+form.addEventListener('change', ev => {
+  if (ev.target.name === 'rating') document.getElementById('word').textContent = WORDS[ev.target.value];
+});
+form.addEventListener('submit', async ev => {
+  ev.preventDefault();
+  errors();
+  const rating = (form.querySelector('input[name=rating]:checked') || {}).value;
+  if (!rating) return errors({ rating: 'Tap a star to rate the event.' });
+  send.disabled = true;
+  try {
+    const out = await Api.feedback({ p, t, rating, feedback: form.feedback.value });
+    form.hidden = true;
+    done.hidden = false;
+    done.replaceChildren(Object.assign(document.createElement('b'), { textContent: '🙏' }),
+      `Thank you, ${out.name || 'friend'}! Your feedback has been shared with the host.`);
+    done.focus();
+  } catch (err) {
+    errors(err.details || { _: err.message });
+  } finally {
+    send.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

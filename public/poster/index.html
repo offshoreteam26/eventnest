@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Gate poster · EventNest</title>
+<!-- EventAgent make_poster.py: an A4 poster for the entrance. Guests scan it, send ARRIVED and are checked in. -->
+<style>
+  body { margin: 0; background: #e9e4dc; font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #2B2B2B; }
+  .bar { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; padding: 12px 16px; background: #7A1F2B; color: #fff; }
+  .bar select, .bar button { font: inherit; border-radius: 22px; border: 0; padding: 9px 16px; }
+  .bar button { background: #D9A441; color: #2B2B2B; font-weight: 700; cursor: pointer; }
+  .bar select { max-width: 70vw; }
+  .page { display: grid; place-items: center; padding: 20px 12px 40px; }
+  .page svg { width: min(100%, 210mm); height: auto; background: #FFF8EC; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+  .msg { max-width: 30rem; margin: 40px auto; padding: 20px; background: #fff; border-radius: 12px; text-align: center; }
+  [hidden] { display: none !important; }
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .bar, .msg { display: none !important; }
+    .page { padding: 0; }
+    .page svg { width: 210mm; height: 297mm; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bar" id="bar" hidden>
+  <select id="pick" aria-label="Event"></select>
+  <button id="print" type="button">🖨️ Print or save as PDF</button>
+</div>
+<div class="page" id="page"></div>
+<div class="msg" id="msg" role="status">Making the poster…</div>
+<script type="module">
+import { Api } from '/js/api.js';
+import { qrMatrix } from '/js/cards/qr.js';
+import { buildPoster, DEFAULT_STEPS } from '/js/poster.js';
+
+const q = new URLSearchParams(location.search);
+const STORE = 'eventnest.gate.key';
+let key = q.get('key') || '';
+try { if (key) localStorage.setItem(STORE, key); else key = localStorage.getItem(STORE) || ''; } catch (e) { /* the key stays in the link */ }
+const $ = id => document.getElementById(id);
+
+async function draw(code) {
+  $('msg').hidden = false; $('msg').textContent = 'Making the poster…';
+  try {
+    const d = await Api.poster(key, code || '');
+    const steps = d.whatsapp ? DEFAULT_STEPS : [
+      ['1', 'Open your phone camera', '(or Google Lens) and point it at the QR code'],
+      ['2', 'Tap the link', 'The EventNest chat opens with ARRIVED already typed'],
+      ['3', 'Tap Send', "You're checked in - and entered in the Lucky Draw!"]
+    ];
+    $('page').replaceChildren(buildPoster({ title: d.title, sub: d.sub, qrMatrix: qrMatrix(d.link, 'Q'), steps }));
+    const pick = $('pick');
+    if (!pick.options.length) {
+      d.events.slice().reverse().forEach(ev => pick.append(new Option(ev.name, ev.code)));
+      pick.value = code || (d.events.find(ev => ev.name === d.title) || {}).code || '';
+    }
+    document.title = `Gate poster · ${d.title}`;
+    $('bar').hidden = false; $('msg').hidden = true;
+  } catch (err) {
+    $('msg').textContent = err.status === 403 ? 'Not allowed. Open the poster link from the GATE command or the Sheet menu 🚪 Gate check-in link.' : '⚠️ ' + err.message;
+  }
+}
+$('pick').addEventListener('change', e => draw(e.target.value));
+$('print').addEventListener('click', () => window.print());
+if (key) { history.replaceState(null, '', location.pathname + (q.get('e') ? '?e=' + encodeURIComponent(q.get('e')) : '')); draw(q.get('e')); }
+else $('msg').textContent = 'Not allowed. Open the poster link from the GATE command or the Sheet menu 🚪 Gate check-in link.';
+</script>
+</body>
+</html>

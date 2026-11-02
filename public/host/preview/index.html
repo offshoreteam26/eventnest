@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Invitation preview</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#fff;color:#888;font:14px system-ui,sans-serif}</style>
+</head>
+<body>
+<p role="status">Loading the preview…</p>
+<script type="module">
+/* portal.preview: the REAL invitation design with what the host is typing (nothing is saved). */
+import { renderPage, sampleView, previewRsvp } from '/js/invite-render.js';
+const DESIGNS = ['lace', 'garden', 'indian', 'birthday', 'classic'];
+const a = new URLSearchParams(location.search);
+const clean = (s, n) => String(s || '').split(/\s+/).filter(Boolean).join(' ').slice(0, n);
+const design = a.get('design') || '';
+if (!DESIGNS.includes(design)) {
+  document.body.textContent = 'Design not available';
+} else {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.get('iso') || ''), t = /^(\d{1,2}):(\d{2})$/.exec(a.get('tm') || '17:00');
+  const st = m ? new Date(+m[1], +m[2] - 1, +m[3], t ? +t[1] : 17, t ? +t[2] : 0) : (() => { const d = new Date(); d.setHours(17, 0, 0, 0); return d; })();
+  const names = clean(a.get('names'), 60) || ' ';
+  const venue = clean(a.get('venue'), 120) || 'Sri Lakshmi Gardens, Hyderabad';
+  const v = sampleView({ title: names, host: clean(a.get('host'), 40) || 'Host', venue, start: st });
+  const x = design === 'birthday' ? { age: (a.get('age') || '').replace(/\D/g, '').slice(0, 2) || '5' } : {};
+  renderPage({ design, v, x, rsvp: async b => previewRsvp(b), auto: a.get('auto') === '1', y: a.get('y') || 0 });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pay · EventNest</title>
+<!-- EventAgent app.py /pay/<plan> + billing.pay_card: UPI QR with the amount filled in, and a tap-to-pay button. -->
+<style>
+  body { font: 16px system-ui, sans-serif; margin: 0; min-height: 100vh; display: grid; place-items: center; background: #fbf8f4; color: #2b1a1d; text-align: center; }
+  .c { padding: 28px 20px; max-width: 380px; width: 100%; box-sizing: border-box; }
+  .head { background: #5c1a24; color: #fff; border-radius: 18px 18px 0 0; padding: 20px 16px 16px; }
+  .head b { display: block; font-size: 26px; } .head span { color: #f0c6cc; font-size: 18px; }
+  .box { background: #fff; border: 1px solid #e9dfd6; border-top: 0; border-radius: 0 0 18px 18px; padding: 18px; }
+  canvas { width: 100%; max-width: 260px; height: auto; image-rendering: pixelated; }
+  a.b { display: block; margin: 18px 0 10px; padding: 16px; border-radius: 14px; background: #5c1a24; color: #fff; font-weight: 600; text-decoration: none; }
+  small { color: #6b5a5c; display: block; line-height: 1.5; }
+  .upi { font-weight: 700; color: #5c1a24; font-size: 18px; margin-top: 6px; user-select: all; }
+</style>
+</head>
+<body>
+<div class="c" id="c"><p role="status">Loading…</p></div>
+<script type="module">
+import { Api } from '/js/api.js';
+import { qrMatrix } from '/js/cards/qr.js';
+const box = document.getElementById('c');
+const want = (new URLSearchParams(location.search).get('plan') || location.pathname.split('/')[2] || '').toUpperCase();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+try {
+  const site = await Api.site();
+  const plan = site.plans.find(p => p.key === want);
+  if (!plan || !site.upi_id) throw Object.assign(new Error('This payment link is not valid.'), { status: 404 });
+  const rs = '₹' + plan.price.toLocaleString('en-IN');
+  document.title = `Pay ${site.brand} · ${plan.name}`;
+  box.innerHTML = `<div class="head"><b>${esc(site.brand)}</b><span>${esc(plan.name)} plan: ${rs}</span></div>
+    <div class="box"><canvas id="qr" aria-label="UPI QR code"></canvas>
+    <small>Scan with PhonePe, GPay, Paytm or any UPI app<br>Amount ${rs} is already filled in</small>
+    <div class="upi">${esc(site.upi_id)}</div>
+    <a class="b" href="${esc(plan.upi)}">Pay ${rs} with UPI</a>
+    <small>On this phone? Tap the button to open your UPI app. Then go back to the chat and reply <b>PAID</b>.</small></div>`;
+  const m = qrMatrix(plan.upi, 'Q'), border = 2, n = m.length + border * 2, scale = 8;
+  const cv = document.getElementById('qr'); cv.width = cv.height = n * scale;
+  const x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height); x.fillStyle = '#000';
+  m.forEach((row, r) => row.forEach((on, k) => { if (on) x.fillRect((k + border) * scale, (r + border) * scale, scale, scale); }));
+  if (/Android|iPhone|iPad/i.test(navigator.userAgent)) setTimeout(() => { location.href = plan.upi; }, 400);   // opens the UPI app at once
+} catch (err) {
+  box.innerHTML = `<h2>${err.status ? 'Not found' : 'Could not load'}</h2><p>${esc(err.message)}</p>`;
+}
+</script>
+</body>
+</html>

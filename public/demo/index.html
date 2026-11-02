@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Demo invitation</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#FFF4F6;color:#3F1223;font:16px system-ui,sans-serif}</style>
+</head>
+<body>
+<p role="status">Opening the demo…</p>
+<script type="module">
+/* demo.py: the REAL invitation designs with sample names (nothing is saved, no WhatsApp is sent).
+   /demo/<design>?n=Names&v=Venue&h=Host   designs: classic lace garden indian birthday */
+import { renderPage, sampleView, demoRsvp } from '/js/invite-render.js';
+const STYLES = {
+  classic:  ['Priya & Arjun', 'Meera & Suresh', 'Sri Lakshmi Gardens, Hyderabad', 'Wedding'],
+  lace:     ['Ananya & Rohan', 'Lakshmi & Ravi', 'The Pearl Banquet, Hyderabad', 'Wedding'],
+  garden:   ['Meera & Karthik', 'Sunita & Anil', 'Green Leaf Lawns, Hyderabad', 'Wedding'],
+  indian:   ['Shubh Vivah: Priya & Arjun', 'Meera & Suresh', 'Mandapam Convention, Hyderabad', 'Wedding'],
+  birthday: ['Aarav turns 5', 'Neha & Vikram', 'Funville Party Hall, Hyderabad', 'Birthday']
+};
+const OK = /[^A-Za-z0-9 &.,'\-ఀ-౿]/g;
+const q = new URLSearchParams(location.search);
+const style = (location.pathname.replace(/^\/demo\/?/, '').split('/')[0] || q.get('style') || 'lace').replace('index.html', '') || 'lace';
+const txt = (key, dflt) => (q.get(key) || '').replace(OK, '').trim().slice(0, 40) || dflt;
+if (!STYLES[style]) {
+  document.body.textContent = 'This demo does not exist.';
+} else {
+  const [t0, h0, v0] = STYLES[style];
+  const title = txt('n', t0), host = txt('h', h0), venue = txt('v', v0);
+  const s = new Date(); s.setDate(s.getDate() + 45); s.setHours(19, 0, 0, 0);
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const v = sampleView({ code: 'DEMO', title, host, venue, start: s, venueSplit: false, calendar: '#', description: 'Demo invitation',
+                         dateText: `${String(s.getDate()).padStart(2, '0')} ${MON[s.getMonth()]} ${s.getFullYear()}`, pageUrl: location.pathname });
+  v.maps = 'https://www.google.com/maps/search/' + encodeURIComponent(venue);
+  renderPage({ design: style, v, rsvp: async body => demoRsvp(body) });
+}
+</script>
+</body>
+</html>

@@ -4,7 +4,9 @@
  * indian_invite.render and birthday_invite.render (same defaults, same words).
  *
  * `v` is the view from the API (EventService.view_ = webinvite._view).
- * EventAgent's "event extras" (end, dress, parking, programme, contact) come from v.extras.
+ * `x` is EventAgent's "event extras" (hostkit.event_extras): the optional Events
+ * columns couple_names, age, intro, tagline, timeline, venue_note, rsvp_text, closing,
+ * dress_code and rsvp_by. Anything left empty keeps the design's own default text.
  * ===================================================================== */
 
 export const DESIGNS = Object.freeze(['classic', 'lace', 'garden', 'indian', 'birthday']);
@@ -17,21 +19,23 @@ const DESIGN_FOR_STYLE = Object.freeze({
   arch: 'garden', peach: 'garden'
 });
 
-/** ?t=<design> (for testing) → the design chosen in the Sheet → a design that suits the card style → classic. */
+/** ?t=<design> (for testing) → the design chosen in the Sheet → event type → a design that suits the card style → classic. */
 export function pickDesign(asked, ev, v) {
   if (DESIGNS.includes(asked)) return asked;
   const chosen = String(ev.web_design || '').trim().toLowerCase();
   if (DESIGNS.includes(chosen) && chosen !== 'classic') return chosen;
-  if (/birthday|b'?day/i.test(v.title || '')) return 'birthday';
+  if (ev.event_type === 'birthday' || /birthday|b'?day/i.test(v.title || '')) return 'birthday';
   return DESIGN_FOR_STYLE[String(ev.card_style || '').trim()] || 'classic';
 }
 
 /* ---------- small Python helpers ---------- */
 const clean = (s, n = 400) => String(s ?? '').split(/\s+/).filter(Boolean).join(' ').slice(0, n);
 const titleCase = s => s.replace(/[A-Za-z]+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+const lines = s => String(s ?? '').replace(/\\n/g, '\n').split('\n');
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const ord = n => n + (n % 100 >= 10 && n % 100 <= 20 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'));
+const ICONS = ['welcome', 'ceremony', 'cocktail', 'dinner', 'dancing'];
 
 function splitNames(text) {
   const m = /\s*(?:&|\+|\band\b|\bweds\b)\s*/i.exec(text || '');
@@ -39,11 +43,18 @@ function splitNames(text) {
   return parts.map(p => p.trim()).filter(Boolean).slice(0, 2);
 }
 
-/** EventAgent's event extras, rebuilt from the "good to know" rows of the view. */
-function extrasOf(v) {
+function namesOf(v, x) {
+  const names = splitNames(clean(x.names || v.title, 80));
+  if (!names.length) names.push(v.title || '');
+  const initials = names.length === 2 ? names.map(n => n.slice(0, 1).toUpperCase()).join('&') : titleCase(names[0].slice(0, 2));
+  return { names, initials };
+}
+
+/** EventAgent's event extras: the "good to know" rows of the view + the extra Events columns (x). */
+function extrasOf(v, x = {}) {
   const byLabel = Object.fromEntries((v.extras || []).map(([label, value]) => [label, value]));
   return { end: byLabel['Ends'], dress: byLabel['Dress code'], parking: byLabel['Parking'],
-           programme: byLabel['Programme'], contact: byLabel['Contact'] };
+           programme: byLabel['Programme'], contact: byLabel['Contact'], ...x };
 }
 
 /* ---------- lace (also the base for indian and birthday) ---------- */
@@ -56,23 +67,29 @@ const LACE_TIMELINE = [
   { time: '10:30 PM', title: 'Dancing', icon: 'dancing', text: 'The party begins – dancing and celebrating until late.' }
 ];
 
-function lace(v) {
-  const names = splitNames(clean(v.title, 80));
-  if (!names.length) names.push(v.title || '');
-  const initials = names.length === 2 ? names.map(n => n.slice(0, 1).toUpperCase()).join('&') : titleCase(names[0].slice(0, 2));
+function lace(v, xx = {}) {
+  const x = extrasOf(v, xx);
+  const { names, initials } = namesOf(v, x);
   let dateDots = '';
   if (v.starts_iso) {
     const [y, m, d] = v.starts_iso.slice(0, 10).split('-');
     dateDots = `${d}.${m}.${y}`;
   }
+  const raw = Array.isArray(x.timeline) && x.timeline.length ? x.timeline : LACE_TIMELINE;
+  const timeline = raw.slice(0, 12).filter(it => it && typeof it === 'object' && (it.title || it.time)).map(it => {
+    const ic = String(it.icon || '').toLowerCase();
+    return { time: clean(it.time, 14), title: clean(it.title, 40), text: clean(it.text, 160), icon: ICONS.includes(ic) ? ic : 'welcome' };
+  });
+  const rsvpBy = clean(x.rsvp_by, 40);
   return {
     names, initials, date_dots: dateDots || v.date_text || '',
-    intro: 'Together with their families',
-    tagline: LACE_TAGLINE.split('\n').filter(l => l.trim()).slice(0, 3),
-    notes: [],
-    timeline: LACE_TIMELINE.map(it => ({ ...it })),
-    rsvp_text: 'Nothing would make us happier than celebrating this day surrounded by our favourite people. ' +
-               'Please let us know whether you’ll be able to join us.',
+    intro: clean(x.intro, 80) || 'Together with their families',
+    tagline: lines(x.tagline || LACE_TAGLINE).filter(l => l.trim()).slice(0, 3),
+    notes: lines(x.venue_note).map(p => p.trim()).filter(Boolean).slice(0, 4),
+    timeline,
+    rsvp_text: clean(x.rsvp_text, 300) ||
+      ('Nothing would make us happier than celebrating this day surrounded by our favourite people. ' +
+       'Please let us know whether you’ll be able to join us' + (rsvpBy ? ` by ${rsvpBy}.` : '.')),
     music: true
   };
 }
@@ -85,11 +102,9 @@ const GARDEN_TIMELINE = [
 ];
 const GARDEN_EXTRAS = [['end', 'Ends'], ['parking', 'Parking'], ['contact', 'Contact'], ['programme', 'Programme']];
 
-function garden(v) {
-  const x = extrasOf(v);
-  const names = splitNames(clean(v.title, 80));
-  if (!names.length) names.push(v.title || '');
-  const initials = names.length === 2 ? names.map(n => n.slice(0, 1).toUpperCase()).join('&') : titleCase(names[0].slice(0, 2));
+function garden(v, xx = {}) {
+  const x = extrasOf(v, xx);
+  const { names, initials } = namesOf(v, x);
   const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v.starts_iso || '');
   let dateStack = [], longDate = v.date_text || '', schedDate = v.date_text || '', until = '', timeText = '';
   if (m) {
@@ -102,13 +117,16 @@ function garden(v) {
     const h = dt.getHours() % 12 || 12;
     timeText = `${h}:${String(dt.getMinutes()).padStart(2, '0')} ${dt.getHours() < 12 ? 'AM' : 'PM'}`;
   }
+  const raw = Array.isArray(x.timeline) && x.timeline.length ? x.timeline : GARDEN_TIMELINE;
   return {
     names, initials, date_stack: dateStack, long_date: longDate, time_text: timeText,
-    sched_date: schedDate, until, timeline: GARDEN_TIMELINE.map(it => ({ ...it })),
+    sched_date: schedDate, until,
+    timeline: raw.slice(0, 14).filter(it => it && typeof it === 'object' && (it.title || it.time))
+      .map(it => ({ time: clean(it.time, 14), title: clean(it.title, 50) })),
     extras: GARDEN_EXTRAS.filter(([k]) => x[k]).map(([k, label]) => [label, clean(x[k], 150)]),
-    intro: 'We’re getting married',
-    closing: 'We’re so happy to celebrate this day with you.',
-    rsvp_sub: 'We hope you can make it',
+    intro: clean(x.intro, 60) || 'We’re getting married',
+    closing: clean(x.closing, 120) || 'We’re so happy to celebrate this day with you.',
+    rsvp_sub: clean(x.rsvp_sub, 60) || 'We hope you can make it',
     dress: clean(x.dress, 60),
     music: true
   };
@@ -124,9 +142,12 @@ const INDIAN_TIMELINE = [
   { time: '9:30 PM', title: 'Reception & Dinner', text: 'Feast and celebrate with us.' }
 ];
 
-function indian(v) {
-  return { ...lace(v), timeline: INDIAN_TIMELINE.map(it => ({ ...it })),
-           tagline: ['With joy in our hearts, we invite you', 'to celebrate every moment with us.'], music: true };
+function indian(v, x = {}) {
+  const L = lace(v, x);
+  if (!Array.isArray(x.timeline)) L.timeline = INDIAN_TIMELINE.map(it => ({ ...it }));
+  L.tagline = ['With joy in our hearts, we invite you', 'to celebrate every moment with us.'];
+  L.music = true;
+  return L;
 }
 
 /* ---------- birthday ---------- */
@@ -137,23 +158,25 @@ const BIRTHDAY_TIMELINE = [
   { time: '8:00 PM', title: 'Dance & Music', text: "Let's party until late." }
 ];
 
-function birthday(v) {
-  const L = { ...lace(v), timeline: BIRTHDAY_TIMELINE.map(it => ({ ...it })),
-              tagline: ['Games, cake and lots of fun –', 'here’s how the day goes.'],
-              rsvp_text: 'Please let us know if you can join the fun.', music: true };
+function birthday(v, x = {}) {
+  const L = lace(v, x);
+  if (!Array.isArray(x.timeline)) L.timeline = BIRTHDAY_TIMELINE.map(it => ({ ...it }));
+  if (!x.tagline) L.tagline = ['Games, cake and lots of fun –', 'here’s how the day goes.'];
+  if (!x.rsvp_text) L.rsvp_text = 'Please let us know if you can join the fun' + (x.rsvp_by ? ` by ${x.rsvp_by}.` : '.');
+  L.music = true;
   const title = v.title || '';
-  const H = { age: '', host: clean(v.host, 40),
+  const H = { age: String(x.age || '').replace(/[^0-9A-Za-z]/g, '').slice(0, 3), host: clean(v.host, 40),
               name: title.replace(/['’]s\s+birthday(\s+party)?\s*$|\s+birthday(\s+party)?\s*$/i, '').trim() || title };
   return { L, H };
 }
 
 /** The template context for one design: { v, L } / { v, G } / { v, L, H }. */
-export function contextFor(design, v) {
+export function contextFor(design, v, x = {}) {
   switch (design) {
-    case 'lace':     return { v, L: lace(v) };
-    case 'garden':   return { v, G: garden(v) };
-    case 'indian':   return { v, L: indian(v) };
-    case 'birthday': return { v, ...birthday(v) };
+    case 'lace':     return { v, L: lace(v, x) };
+    case 'garden':   return { v, G: garden(v, x) };
+    case 'indian':   return { v, L: indian(v, x) };
+    case 'birthday': return { v, ...birthday(v, x) };
     default:         return { v };
   }
 }

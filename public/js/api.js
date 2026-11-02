@@ -28,5 +28,11 @@ export const Api = Object.freeze({
   pass:       (p, t) => call('GET', 'pass', { p, t }),
   rsvp:       body => call('POST', 'rsvp', body),
   chatOpen:   who => call('POST', 'chat_open', who),
-  chat:       (phone, token, text) => call('POST', 'chat', { phone, token, text })
+  chat:       (phone, token, text) => call('POST', 'chat', { phone, token, text }),
+  gate:       (key, code) => call('POST', 'gate', { key, code }),
+  feedback:   body => call('POST', 'feedback', body),
+  luckyDraw:  (key, event_id) => call('POST', 'luckydraw', { key, event_id }),
+  poster:     (key, e) => call('POST', 'poster', { key, e }),
+  site:       () => call('GET', 'site'),
+  post:       (action, body) => call('POST', action, body)            // host portal (js/host-api.js)
 });
