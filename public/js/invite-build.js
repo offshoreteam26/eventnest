@@ -9,7 +9,7 @@
  * dress_code and rsvp_by. Anything left empty keeps the design's own default text.
  * ===================================================================== */
 
-export const DESIGNS = Object.freeze(['classic', 'lace', 'garden', 'indian', 'birthday']);
+export const DESIGNS = Object.freeze(['classic', 'lace', 'garden', 'indian', 'birthday', 'carnival']);
 
 /** Which design a card style suggests when the host didn't pick one (Events tab → web_design). */
 const DESIGN_FOR_STYLE = Object.freeze({
@@ -170,6 +170,21 @@ function birthday(v, x = {}) {
   return { L, H };
 }
 
+/* ---------- carnival (birthday with circus tents; chosen with Events tab -> web_design = carnival) ---------- */
+function carnival(v, x = {}) {
+  const { H } = birthday(v, x);
+  const C = { iso_date: '', dd: '', mm: '', yyyy: '', long: v.date_text || '', long_up: String(v.date_text || '').toUpperCase(),
+              weekday: v.weekday || '', weekday_up: String(v.weekday || '').toUpperCase(), time: '', time_up: 'EVENING',
+              whatsapp: String(x.whatsapp || '').replace(/\D/g, '').slice(0, 15) };
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v.starts_iso || '');
+  if (m) {
+    const month = MONTHS[+m[2] - 1];
+    Object.assign(C, { iso_date: `${m[1]}-${m[2]}-${m[3]}`, dd: m[3], mm: m[2], yyyy: m[1], long: `${+m[3]} ${month} ${m[1]}`, long_up: `${+m[3]} ${month} ${m[1]}`.toUpperCase() });
+    C.time = v.time || ''; C.time_up = (v.time || 'Evening').toUpperCase();
+  }
+  return { H, C };
+}
+
 /** The template context for one design: { v, L } / { v, G } / { v, L, H }. */
 export function contextFor(design, v, x = {}) {
   switch (design) {
@@ -177,6 +192,7 @@ export function contextFor(design, v, x = {}) {
     case 'garden':   return { v, G: garden(v, x) };
     case 'indian':   return { v, L: indian(v, x) };
     case 'birthday': return { v, ...birthday(v, x) };
+    case 'carnival': return { v, ...carnival(v, x) };
     default:         return { v };
   }
 }

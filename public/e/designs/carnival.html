@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ v.title }}</title>
+<meta name="description" content="{{ v.description }}">
+<meta property="og:type" content="website"><meta property="og:title" content="{{ v.og_title or v.title }}"><meta property="og:description" content="{{ v.description }}">{% if v.page_url %}<meta property="og:url" content="{{ v.page_url }}">{% endif %}{% if v.og_image %}<meta property="og:image" content="{{ v.og_image }}">{% endif %}<meta name="theme-color" content="#d99a94">
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>@font-face{font-family:"Great Vibes";src:url(/cards/fonts/GreatVibes-Regular.ttf) format("truetype");font-display:swap}@font-face{font-family:"Cormorant Garamond";src:url(/cards/fonts/CormorantGaramond%5Bwght%5D.ttf) format("truetype");font-weight:300 700;font-display:swap}@font-face{font-family:"Cormorant Garamond";src:url(/cards/fonts/CormorantGaramond-Italic%5Bwght%5D.ttf) format("truetype");font-weight:300 700;font-style:italic;font-display:swap}@font-face{font-family:"Cinzel";src:url(/cards/fonts/Cinzel%5Bwght%5D.ttf) format("truetype");font-weight:400 900;font-display:swap}</style>
+<style>
+:root{--rose:#d99a94;--rg:#b76e79;--gold:#c9964f;--cream:#fff6ea;--blush:#f9d4dc;--ink:#6b3a45;--bg:#f4c9d1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#f4c9d1}}:root[data-theme=dark]{--bg:#f4c9d1}
+*{box-sizing:border-box;margin:0}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:radial-gradient(circle at 20% 10%,#fde5ea,transparent 50%),radial-gradient(circle at 85% 80%,#ffe9d2,transparent 50%),var(--bg);color:var(--ink);font:500 1.1rem/1.5 'Cormorant Garamond',serif;overflow-x:hidden;min-height:100dvh}body.lock{overflow:hidden}
+.sc{font-family:'Great Vibes',cursive;font-weight:400}.cz{font-family:Cinzel,serif}
+.gold{background:linear-gradient(180deg,#f9e7b8,#c9964f 55%,#a8732f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,.7))}
+.cap .gold{background:none;color:#b8863b;-webkit-text-fill-color:#b8863b;filter:none}.cap .rv{opacity:1!important;transform:none!important}.cap *{animation:none!important}
+/* ENVELOPE */
+#env{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 20%,#fbd7d9,#e8aaa7 60%,#d58f8c);transition:opacity 1s,visibility 0s 1s}#env.x{opacity:0;visibility:hidden;pointer-events:none}
+.eb{position:relative;width:100vw;height:100dvh;container-type:size;overflow:hidden;background:#d99a94;perspective:1400px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.eb>*{position:absolute;--u:min(1cqw,.5cqh)}
+.bk{inset:0;background:linear-gradient(160deg,#e2a49e,#cf8d89)}
+.tx{inset:0;opacity:.35;mix-blend-mode:multiply;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");pointer-events:none;z-index:9}
+.lines{inset:0;z-index:8;pointer-events:none;opacity:.5}
+.pcard{left:calc(50% - 42*var(--u));width:calc(84*var(--u));top:66%;height:48%;z-index:2;background:linear-gradient(180deg,#fff9ef,#fdeedd);border:2px solid #d9b06a;border-radius:14px;display:flex;flex-direction:column;align-items:center;padding-top:calc(8*var(--u));gap:calc(2*var(--u));transition:transform 1.3s cubic-bezier(.5,0,.2,1);box-shadow:0 -6px 24px rgba(120,50,60,.25)}
+.pcard i{font:400 calc(9*var(--u)) 'Great Vibes';font-style:normal;color:#b8863b}.pcard b{font:700 calc(4*var(--u)) Cinzel;letter-spacing:.3em;color:#a8732f}
+.o .pcard{transform:translateY(-40cqh)}
+.pk{inset:0;z-index:3;background:linear-gradient(180deg,#d8908c,#cf8884);clip-path:polygon(0 38%,50% 66%,100% 38%,100% 100%,0 100%);filter:drop-shadow(0 -2px 3px rgba(90,30,40,.3))}
+.pk:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.18) 38%,transparent 46%)}
+.flap{left:0;right:0;top:38%;height:28%;z-index:4;transform-origin:50% 0;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.6,0,.3,1),z-index 0s .35s}
+.flap>div{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.ff{background:linear-gradient(180deg,#dd9893,#d08986)}.fb{background:linear-gradient(180deg,#ecbcb6,#e3a9a4);transform:rotateX(180deg)}
+.o .flap{transform:rotateX(180deg);z-index:1}
+.nm0{position:absolute;top:7%;left:0;right:0;text-align:center;font:400 calc(10.5*var(--u))/1 'Great Vibes';background:linear-gradient(180deg,#f9e7b8,#c9964f 55%,#a8732f);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,236,200,.6)) drop-shadow(0 -1px 0 rgba(110,60,40,.4))}
+.dt0{left:0;right:0;bottom:calc(33*var(--u));z-index:6;text-align:center;font:700 calc(6*var(--u)) Cinzel;letter-spacing:.2em;transition:opacity .5s}
+.hint{left:0;right:0;bottom:calc(3.5*var(--u));z-index:6;text-align:center;display:flex;flex-direction:column;align-items:center;gap:calc(2.2*var(--u));transition:opacity .5s}.o .dt0,.o .hint{opacity:0;pointer-events:none}
+.hint p{font:italic 500 calc(4.4*var(--u)) 'Cormorant Garamond';color:#fdeedd;letter-spacing:.08em;animation:pl 1.8s ease-in-out infinite}@keyframes pl{50%{opacity:.45;transform:translateY(3px)}}
+.ob{font:700 calc(3.6*var(--u)) Cinzel;letter-spacing:.22em;color:#fdeedd;background:rgba(255,236,200,.15);border:1px solid #f3d9a0;padding:calc(3*var(--u)) calc(6*var(--u));border-radius:40px;min-height:46px}
+/* INVITATION */
+.stage{width:min(100%,480px);margin:0 auto;background:var(--cream);container-type:inline-size;box-shadow:0 0 80px rgba(150,70,90,.25);overflow:hidden;opacity:0;transform:scale(.94);transition:opacity 1.2s .2s,transform 1.4s .2s cubic-bezier(.2,.7,.2,1)}.stage.show{opacity:1;transform:none}
+@media(min-width:900px){.stage{margin:3vh auto;border-radius:30px}}
+#sheet{background:#fff6ea}.sw{position:relative}#sc{display:block;width:100%;height:auto}
+.top{position:absolute;top:5cqw;left:0;right:0;text-align:center;pointer-events:none}.top h1{font:400 clamp(44px,17cqw,84px)/1 'Great Vibes'}.top p{font:700 clamp(9px,3cqw,14px) Cinzel;letter-spacing:.35em;color:#fff;text-shadow:0 1px 4px rgba(150,70,90,.6);margin-top:1cqw}
+.fg{transform-box:view-box;animation:sw 3.4s ease-in-out infinite}@keyframes sw{50%{transform:rotate(7deg)}}
+.tw{animation:tw 2s ease-in-out infinite}@keyframes tw{50%{opacity:.35}}
+.bb{animation:bb 4s ease-in-out infinite}@keyframes bb{50%{transform:translateY(-6px)}}
+.fw{transform-origin:330px 205px;animation:spn 60s linear infinite}@keyframes spn{to{transform:rotate(360deg)}}
+.el{animation:bb 3s ease-in-out infinite}
+.plate{position:relative;margin:-14cqw 5cqw 0;padding:9cqw 5cqw 7cqw;text-align:center;background:linear-gradient(180deg,#fffaf2,#fdeedd);border-radius:6cqw 6cqw 4cqw 4cqw;border:2px solid #d9b06a;box-shadow:inset 0 0 0 5px #fffaf2,inset 0 0 0 6.5px #e3c27e,0 12px 30px rgba(150,70,90,.25)}
+.plate .cl,.plate .cr{position:absolute;top:-17cqw;width:22cqw;height:auto}.plate .cl{left:-6cqw}.plate .cr{right:-6cqw;transform:scaleX(-1)}
+.yi{font:400 clamp(28px,11cqw,54px)/1 'Great Vibes'}.lc{font:700 clamp(8px,2.9cqw,13px) Cinzel;letter-spacing:.24em;color:var(--rg);margin:3cqw 0 1cqw}
+.nm{font:700 clamp(30px,12.5cqw,76px)/1.05 Cinzel;letter-spacing:.06em;white-space:nowrap;background:linear-gradient(180deg,#e9a7b2,#b76e79 55%,#d99a94);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #fff) drop-shadow(0 3px 6px rgba(150,70,90,.3))}.cap .nm{background:none;-webkit-text-fill-color:#b76e79;color:#b76e79;filter:none}
+.dr{display:flex;justify-content:center;gap:3cqw;align-items:center;margin-top:3cqw;font:700 clamp(18px,7cqw,34px) Cinzel;color:#a8732f}.dr i{font-style:normal;font-size:.5em;color:var(--rg)}
+.dy{font:700 clamp(9px,3.2cqw,15px) Cinzel;letter-spacing:.24em;color:var(--ink);margin-top:2cqw}.vn{font:italic 500 clamp(13px,4.2cqw,19px) 'Cormorant Garamond';margin-top:2cqw;color:var(--rg)}
+.chev{display:block;margin:5cqw auto 0;font:700 3cqw Cinzel;letter-spacing:.3em;color:var(--gold);animation:pl 1.8s infinite}
+.det{position:relative;margin:7cqw 5cqw 0;padding:8cqw 6cqw;text-align:center;background:linear-gradient(180deg,#fffaf2,#fdeedd);border-radius:5cqw;border:2px solid #d9b06a;box-shadow:inset 0 0 0 5px #fffaf2,inset 0 0 0 6.5px #e3c27e,0 10px 26px rgba(150,70,90,.2)}
+.det .sc{font-size:clamp(30px,11cqw,52px);line-height:1.1}.det p.m{font-size:clamp(15px,4.6cqw,21px);margin:3cqw 0}
+.orn{color:var(--gold);letter-spacing:.5em;font-size:4cqw}
+.ls{display:grid;gap:3cqw;margin:5cqw 0;text-align:left}.ls div{display:flex;gap:3.5cqw;align-items:center;padding:3cqw 4cqw;background:rgba(249,212,220,.35);border-radius:4cqw;border:1px solid #ecc9a0}
+.ls span{font-size:7cqw;width:10cqw;text-align:center}.ls small{display:block;font:700 clamp(8px,2.6cqw,11px) Cinzel;letter-spacing:.22em;color:var(--rg)}.ls b{font:700 clamp(14px,4.8cqw,21px) 'Cormorant Garamond'}
+.fin{font:italic 600 clamp(17px,5.4cqw,24px) 'Cormorant Garamond';color:var(--ink)}
+.ft{height:8cqw}
+.acts{width:min(100%,480px);margin:0 auto;padding:6cqw 5vw 12vw;display:grid;gap:12px;grid-template-columns:1fr 1fr}@media(min-width:480px){.acts{padding:28px 24px 60px}}
+.acts button{min-height:52px;border:0;border-radius:30px;font:700 .78rem Cinzel;letter-spacing:.14em;color:#fff;background:linear-gradient(180deg,#e59aa9,#c4768a);box-shadow:0 5px 0 #a65a6e,0 10px 18px rgba(167,90,110,.3);padding:.8rem 1rem;cursor:pointer;touch-action:manipulation}.acts button:active{transform:translateY(3px);box-shadow:0 2px 0 #a65a6e}.acts .w{grid-column:1/3;background:linear-gradient(180deg,#43d17a,#1fa85a);box-shadow:0 5px 0 #15803f,0 10px 18px rgba(31,168,90,.3)}.acts .g{background:linear-gradient(180deg,#e8c27e,#c9964f);box-shadow:0 5px 0 #9c7230,0 10px 18px rgba(201,150,79,.3);color:#3f2a10}.acts .c{grid-column:1/3;background:linear-gradient(180deg,#8fb7f0,#5f8fd8);box-shadow:0 5px 0 #416cb0,0 10px 18px rgba(95,143,216,.3)}
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s,transform .9s}.rv.in{opacity:1;transform:none}
+#cf{position:fixed;inset:0;width:100%;height:100%;z-index:120;pointer-events:none}
+.fb2{position:fixed;bottom:-120px;z-index:110;width:46px;height:58px;border-radius:50% 50% 48% 48%;pointer-events:none;animation:up linear forwards}.fb2:after{content:"";position:absolute;left:50%;top:100%;width:1px;height:60px;background:rgba(255,255,255,.8)}@keyframes up{to{transform:translateY(-130vh) translateX(var(--dx))}}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#fff;color:var(--ink);padding:.7rem 1.2rem;border-radius:20px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:130;font:600 1rem 'Cormorant Garamond';display:none;max-width:90vw;text-align:center}
+#host{position:fixed;left:8px;bottom:8px;z-index:140;width:min(320px,94vw);background:#fff;border:2px solid var(--gold);border-radius:14px;padding:12px;font:.85rem 'Cormorant Garamond';display:none;flex-direction:column;gap:6px}.edit #host{display:flex}#host input{padding:.5rem;border:1px solid #d9b06a;border-radius:8px;font:inherit;width:100%}#host button{padding:.5rem;border:0;border-radius:8px;background:var(--gold);color:#fff;font:700 .8rem Cinzel;cursor:pointer}
+/* RESPONSIVE: tablet (single wider column) and desktop (two columns, sticky illustration) */
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+@media(min-width:600px){.stage,.acts{width:min(100%,680px)}}
+body.cap .stage{width:min(100%,480px)}
+@media(min-width:900px){
+ body:not(.cap) .stage{width:min(1360px,94vw);margin:4vh auto 0;background:none;box-shadow:none;overflow:visible;container-type:normal}
+ body:not(.cap) #sheet{background:none;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:clamp(24px,3.5vw,56px);align-items:start}
+ body:not(.cap) .sw{position:sticky;top:3vh;justify-self:center;width:100%;max-width:80vh;container-type:inline-size;border-radius:28px;overflow:hidden;border:3px solid #fff6ea;box-shadow:0 30px 70px rgba(150,70,90,.3)}
+ body:not(.cap) .rc{container-type:inline-size;min-width:0}
+ body:not(.cap) .plate{margin:17cqw 0 0}
+ body:not(.cap) .det{margin:7cqw 0 0}
+ body:not(.cap) .ft{grid-column:1/-1;height:0}
+ .acts{width:min(1100px,94vw);grid-template-columns:repeat(5,1fr);padding:36px 0 70px}.acts button{grid-column:auto!important}
+}
+/* ===== PREMIUM ADD-ONS (same theme; existing rules untouched) ===== */
+#pg{position:fixed;top:0;left:0;height:4px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#f3d9a0,#d79a8c,#b76e79);z-index:130}
+.more{width:min(100%,680px);margin:0 auto;padding:0 5vw;overflow-x:clip;position:relative}
+.more section{margin:clamp(38px,8vw,70px) 0;position:relative}
+.dv{display:block;width:100%;height:auto;margin-top:clamp(30px,6vw,56px)}
+.sx{padding:clamp(30px,7vw,54px) clamp(18px,5vw,42px);text-align:center;background:linear-gradient(180deg,#fffaf2,#fdeedd);border-radius:clamp(22px,5vw,34px);border:2px solid #d9b06a;box-shadow:inset 0 0 0 5px #fffaf2,inset 0 0 0 6.5px #e3c27e,0 10px 26px rgba(150,70,90,.2)}
+.sx h2,.gh{font:400 clamp(34px,9.5vw,60px)/1.1 'Great Vibes',cursive}.sx h3{font:700 clamp(9px,2.8vw,13px) Cinzel;letter-spacing:.3em;color:var(--rg);margin-bottom:6px}
+.sx p.m{font-size:clamp(16px,4.3vw,21px);margin:12px auto;max-width:640px}
+.cdz{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(6px,2vw,16px);margin:22px auto 8px;max-width:520px}
+.cdz div{padding:clamp(10px,3vw,18px) 4px;background:rgba(249,212,220,.4);border:1px solid #ecc9a0;border-radius:16px}.cdz b{display:block;font:700 clamp(22px,7vw,40px) Cinzel;color:#a8732f}.cdz span{font:700 clamp(7px,2.2vw,10px) Cinzel;letter-spacing:.2em;color:var(--rg)}
+.bs{display:inline-block;margin:10px 6px 0;min-height:48px;border:0;border-radius:30px;font:700 .78rem Cinzel;letter-spacing:.14em;color:#fff;background:linear-gradient(180deg,#e59aa9,#c4768a);box-shadow:0 5px 0 #a65a6e,0 10px 18px rgba(167,90,110,.3);padding:.8rem 1.4rem;cursor:pointer;touch-action:manipulation;text-decoration:none}.bs:active{transform:translateY(3px);box-shadow:0 2px 0 #a65a6e}.bs.g{background:linear-gradient(180deg,#e8c27e,#c9964f);box-shadow:0 5px 0 #9c7230,0 10px 18px rgba(201,150,79,.3);color:#3f2a10}.bs[disabled]{opacity:.5;pointer-events:none}
+.tri{display:grid;gap:12px;margin-top:20px}.tri div{padding:16px;border-radius:18px;background:rgba(249,212,220,.35);border:1px solid #ecc9a0}.tri span{font-size:2rem;display:block;animation:bb 4s ease-in-out infinite}.tri b{font:700 .85rem Cinzel;letter-spacing:.18em;color:var(--rg);display:block;margin:4px 0}.tri p{font-size:1.02rem}
+.gh{text-align:center;margin-bottom:18px}
+.gg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,2.4vw,18px)}
+.gi{all:unset;box-sizing:border-box;position:relative;cursor:pointer;aspect-ratio:4/5;border-radius:22px;overflow:hidden;border:3px solid #fff6ea;outline:2px solid #d9b06a;background:linear-gradient(160deg,#fffaf2,#f9d4dc);box-shadow:0 10px 24px rgba(150,70,90,.25);transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s;-webkit-tap-highlight-color:transparent}
+.gi:first-child{grid-column:1/-1;aspect-ratio:4/3}.gi:hover,.gi:focus-visible{transform:translateY(-6px) rotate(-1deg);box-shadow:0 18px 34px rgba(150,70,90,.35)}.gi:nth-child(even):hover{transform:translateY(-6px) rotate(1deg)}
+.gi img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
+.gi .ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:italic 500 1rem 'Cormorant Garamond';color:var(--rg);text-align:center;padding:8px}.gi .ph svg{width:62%;max-height:70%}
+.gi .gc{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;color:#fff;font:italic 600 1rem 'Cormorant Garamond';background:linear-gradient(transparent,rgba(120,50,70,.65));text-align:center}
+.gnote{text-align:center;margin-top:14px;font:700 .72rem Cinzel;letter-spacing:.2em;color:var(--rg)}
+.lb{position:fixed;inset:0;z-index:160;background:rgba(70,24,40,.94);display:none;align-items:center;justify-content:center;touch-action:pan-y}.lb.on{display:flex;animation:lbi .35s}@keyframes lbi{from{opacity:0}}
+.lb .fr{max-width:94vw;max-height:84vh;display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .35s,transform .35s}.lb .fr.sw{opacity:0;transform:scale(.96)}.lb img{max-width:94vw;max-height:76vh;object-fit:contain;border-radius:14px;border:3px solid #fff6ea;box-shadow:0 20px 60px rgba(0,0,0,.5)}.lb .ph{width:min(86vw,420px);aspect-ratio:4/5;border-radius:18px;background:linear-gradient(160deg,#fffaf2,#f9d4dc);border:3px solid #fff6ea;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--rg);font:italic 500 1.2rem 'Cormorant Garamond'}.lb .ph svg{width:60%}
+.lb p{color:#fdeedd;font:italic 600 1.15rem 'Cormorant Garamond';text-align:center}
+.lb button{position:absolute;width:52px;height:52px;border-radius:50%;border:1px solid #f3d9a0;background:rgba(255,236,200,.15);color:#fdeedd;font-size:1.5rem;cursor:pointer;touch-action:manipulation}.lb .x{top:calc(env(safe-area-inset-top,0px) + 14px);right:14px}.lb .pv{left:10px;top:50%;margin-top:-26px}.lb .nx{right:10px;top:50%;margin-top:-26px}.lb .ct{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:0;right:0;text-align:center;color:#f3d9a0;font:700 .75rem Cinzel;letter-spacing:.25em}
+.vg{display:grid;gap:22px;text-align:left;margin-top:18px}.vi b{font:700 clamp(18px,5vw,26px) 'Cormorant Garamond';display:block}.vi small{display:block;font:700 .68rem Cinzel;letter-spacing:.22em;color:var(--rg);margin:14px 0 2px}.vi p{font-size:clamp(16px,4.3vw,20px)}
+.map{aspect-ratio:4/3;border-radius:20px;overflow:hidden;border:3px solid #fff6ea;outline:2px solid #d9b06a;background:linear-gradient(160deg,#fffaf2,#f9d4dc);display:flex;align-items:center;justify-content:center;text-align:center;color:var(--rg);font:italic 500 1.1rem 'Cormorant Garamond';padding:14px}.map iframe{width:100%;height:100%;border:0}
+.wfm{display:flex;flex-direction:column;gap:10px;max-width:460px;margin:18px auto 0}.wfm input,.wfm textarea,.mo input,.mo select{font:500 1rem 'Cormorant Garamond';padding:.85rem 1rem;border-radius:14px;border:2px solid #e3c27e;background:#fff;color:var(--ink);width:100%}
+.wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(240px,100%),1fr));gap:12px;margin-top:22px;text-align:left}.wc{padding:16px;border-radius:18px;background:rgba(249,212,220,.35);border:1px solid #ecc9a0;animation:wi .8s both}.wc b{font:700 .78rem Cinzel;letter-spacing:.14em;color:var(--rg)}@keyframes wi{from{opacity:0;transform:translateY(16px)}}
+.ty h2{font-size:clamp(40px,12vw,76px)}.ty .sig{font:italic 600 clamp(18px,5vw,26px) 'Cormorant Garamond';margin-top:10px}
+.mo{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;background:rgba(244,201,209,.9);padding:20px}.mo.on{display:flex;animation:lbi .3s}.mo form{width:min(440px,100%);background:#fffaf2;border:2px solid #d9b06a;border-radius:26px;padding:26px 22px;display:flex;flex-direction:column;gap:10px;text-align:center;box-shadow:0 20px 60px rgba(150,70,90,.35)}
+.mo.ok form{align-items:center}
+.zz{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(255,246,234,.94);text-align:center;padding:20px}.zz.on{display:flex;animation:lbi .4s}.zz .hh{font-size:4rem;animation:bb 1.2s ease-in-out infinite}
+#mp{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:125;display:none;align-items:center;gap:4px;padding:5px 8px;border-radius:40px;background:rgba(255,250,242,.94);border:2px solid #d9b06a;box-shadow:0 8px 22px rgba(150,70,90,.3)}body.on #mp{display:flex}
+#mp button{width:44px;height:44px;border-radius:50%;border:0;background:linear-gradient(180deg,#e8c27e,#c9964f);color:#3f2a10;font-size:1rem;cursor:pointer;touch-action:manipulation}#mp #mpm{background:none;font-size:1.15rem}
+#mp input{width:70px;accent-color:#b76e79;height:30px}@media(min-width:600px){#mp input{width:96px}}
+.eq{display:flex;gap:2px;align-items:flex-end;height:20px;width:20px}.eq b{flex:1;background:#b76e79;border-radius:2px;height:4px}.pl .eq b{animation:eq .8s ease-in-out infinite alternate}.pl .eq b:nth-child(2){animation-delay:-.3s}.pl .eq b:nth-child(3){animation-delay:-.6s}@keyframes eq{to{height:20px}}
+#mph{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);z-index:125;background:#fff;border:2px solid #d9b06a;border-radius:16px;padding:.5rem .9rem;font:600 .95rem 'Cormorant Garamond';color:var(--ink);box-shadow:0 8px 22px rgba(150,70,90,.3);opacity:0;transform:translateY(8px);transition:.5s;pointer-events:none}#mph.s{opacity:1;transform:none}
+.more .rv{transition-delay:var(--d,0s)}.rv.rl{transform:translateX(-36px)}.rv.rr{transform:translateX(36px)}.rv.zi{transform:scale(.92)}.rv.rl.in,.rv.rr.in,.rv.zi.in{transform:none}
+.hid{display:none}
+@media(min-width:600px){.tri{grid-template-columns:repeat(3,1fr)}.gg{grid-template-columns:repeat(4,minmax(0,1fr))}.gi:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}}
+@media(min-width:900px){.more{width:min(1360px,94vw);padding:0}.sx{max-width:980px;margin-inline:auto}.gal{max-width:1100px;margin-inline:auto}.vg{grid-template-columns:1fr 1.15fr;align-items:center;gap:36px}.wsx{display:grid;grid-template-columns:1fr 1.2fr;gap:36px;text-align:left}.wsx .wfm{margin:0}.wsx .wg{margin-top:0;max-height:420px;overflow:auto;align-content:start}.wsx>div:first-child{text-align:center}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+
+/* ===== EventNest additions ===== */
+.pcard b,.nm{text-transform:uppercase}
+</style></head>
+<body class="lock">
+
+<div id="env"><div class="eb" id="eb" role="button" tabindex="0" aria-label="Tap to open the invitation">
+ <div class="bk"></div>
+ <svg class="lines" viewBox="0 0 440 900" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#fff" stroke-width="1.1" stroke-linecap="round"><g opacity=".6"><circle cx="110" cy="90" r="22"/><circle cx="110" cy="90" r="13"/><path d="M110 68q22-10 40 6M110 112q-26 6-40-14M88 90q-20-24 0-46M132 90q24-8 36 14M60 130q30-20 60 10M150 60q40-20 70 20"/><circle cx="60" cy="760" r="26"/><circle cx="60" cy="760" r="15"/><path d="M60 734q28-14 48 8M60 786q-30 8-46-16M34 760q-26-30 0-56M86 760q30-10 44 16M30 720q50-40 100 0"/><circle cx="380" cy="840" r="20"/><circle cx="380" cy="840" r="11"/><path d="M380 820q20-10 36 6M380 860q-24 6-36-12"/></g></svg>
+ <div class="pcard"><i>You’re Invited!</i><b>{{ H.name }}</b></div>
+ <div class="pk"></div>
+ <div class="flap"><div class="ff"><div class="nm0">{{ v.title }}</div></div><div class="fb"></div></div>
+ <div class="dt0 gold">{{ C.dd }} · {{ C.mm }} · {{ C.yyyy }}</div>
+ <div class="hint"><p>Tap to Open</p><button class="ob" id="ob">OPEN INVITATION</button></div>
+ <div class="tx"></div>
+</div></div>
+
+<div class="stage" id="stage"><div id="sheet">
+ <div class="sw"><svg id="sc" viewBox="0 0 400 470" role="img" aria-label="Carnival with circus tents, balloons and an elephant"></svg>
+  <div class="top"><h1 class="sc gold">Save the Date</h1><p>ROLL UP, ROLL UP</p></div></div>
+  <div class="rc"><div class="plate rv" id="plate"><svg class="cl" viewBox="0 0 90 120"></svg><svg class="cr" viewBox="0 0 90 120"></svg>
+   <p class="yi sc gold">You’re Invited!</p><p class="lc">LET’S CELEBRATE THE BIRTHDAY OF</p><h2 class="nm">{{ H.name }}</h2>
+   <div class="dr"><span>{{ C.dd }}</span><i>✦</i><span>{{ C.mm }}</span><i>✦</i><span>{{ C.yyyy }}</span></div>
+   <p class="dy">{{ C.weekday_up }} · <span class="tT">{{ C.time_up }}</span></p><p class="vn vV">Venue to be announced</p></div>
+ <section class="det rv"><p class="orn">✦ ✦ ✦</p><p class="sc gold">Come Celebrate!</p>
+  <p class="m">Join us for an evening of laughter, balloons, sweet treats and sparkling surprises as we celebrate {{ H.name }}’s very special day. Your presence will make it even more magical.</p>
+  <div class="ls"><div><span>📅</span><p><small>DATE</small><b>{{ C.long }}</b></p></div><div><span>🎪</span><p><small>DAY</small><b>{{ C.weekday }}</b></p></div><div><span>🕕</span><p><small>TIME</small><b class="tT">{{ C.time }}</b></p></div><div><span>📍</span><p><small>VENUE</small><b class="vV">Venue to be announced</b></p></div></div>
+  <p class="fin">Celebrate this special day with us!</p><p class="orn" style="margin-top:3cqw">🎈 ✦ 🎈</p></section></div><div class="ft"></div>
+</div></div>
+<div class="more" id="more">
+<section class="sx rv zi" id="welcome"><p class="orn">✦ ✦ ✦</p><h3>YOU ARE INVITED</h3><h2 class="gold">Welcome to {{ H.name }}’s Birthday</h2><p class="m">Step right up! A little girl, a lot of balloons, and a day full of laughter, music and sweet surprises is waiting for you. We can’t wait to celebrate with you.</p>
+ <div class="cdz" id="cdz" aria-live="off"><div><b id="cdd">00</b><span>DAYS</span></div><div><b id="cdh">00</b><span>HOURS</span></div><div><b id="cdm">00</b><span>MINUTES</span></div><div><b id="cds">00</b><span>SECONDS</span></div></div>
+ <p class="gnote" id="cdn">UNTIL {{ C.long_up }}</p><button class="bs g" id="calb">ADD TO CALENDAR</button><svg class="dv" id="dv1" viewBox="0 0 400 46" aria-hidden="true"></svg></section>
+<section class="sx rv" id="intro"><h3>ROLL UP, ROLL UP</h3><h2 class="gold">A Day of Carnival Magic</h2><p class="m">Colourful tents, floating balloons, twinkling lights and a happy little elephant — {{ H.name }}’s birthday is a carnival of joy for family and friends.</p>
+ <div class="tri"><div class="rv zi" style="--d:.05s"><span>🎪</span><b>CARNIVAL FUN</b><p>Colour, music and smiles all around</p></div><div class="rv zi" style="--d:.2s"><span>🎂</span><b>SWEET TREATS</b><p>Cake, candles and sweet surprises</p></div><div class="rv zi" style="--d:.35s"><span>🎈</span><b>HAPPY MEMORIES</b><p>Moments to treasure together</p></div></div></section>
+<section class="gal" id="gallery"><h2 class="gh gold rv">Beautiful Memories of {{ H.name }}</h2><div class="gg" id="gg"></div><p class="gnote">TAP ANY PHOTO TO ENLARGE · SWIPE TO BROWSE</p></section>
+<section class="sx rv" id="venue"><h3>CELEBRATE WITH US</h3><h2 class="gold">Find the Venue</h2>
+ <div class="vg"><div class="vi rv rl"><small>VENUE</small><b id="vnm">Venue to be announced</b><small>ADDRESS</small><p id="vad">Full address will be shared soon</p><small>DATE &amp; TIME</small><p>{{ C.weekday }}, {{ C.long }} · <span class="tT">{{ C.time }}</span></p><button class="bs" id="vdir">GET DIRECTIONS</button><button class="bs g" id="vopn">OPEN IN GOOGLE MAPS</button></div><div class="map rv rr" id="vmap">The map will appear here once the venue is added 📍</div></div></section>
+<section class="sx rv" id="wishes"><div class="wsx"><div><h3>FROM THE HEART</h3><h2 class="gold">Special Birthday Wishes</h2><p class="m">Leave a little wish for {{ H.name }} and make her day even brighter.</p>
+ <form class="wfm" id="wf"><input id="wn" maxlength="40" placeholder="Your name" required><textarea id="wm" rows="3" maxlength="220" placeholder="Write your birthday wish…" required></textarea><button class="bs" type="submit">SEND YOUR WISH ❤️</button></form></div><div class="wg" id="wg"></div></div></section>
+<section class="sx ty rv zi" id="thanks"><p class="orn">🎈 ✦ 🎈</p><h3>FROM OUR HEARTS</h3><h2 class="gold">Thank You</h2><p class="m">Thank you for being part of {{ H.name }}’s special day. Your love, blessings and smiles make this celebration truly magical.</p><p class="sig">With love and joy 💕</p>
+ <button class="bs" id="tshare">SHARE INVITATION</button><button class="bs g" id="tdi">DOWNLOAD IMAGE</button><button class="bs g" id="tdp">DOWNLOAD PDF</button><button class="bs g" id="ttop">BACK TO TOP</button><svg class="dv" id="dv2" viewBox="0 0 400 46" aria-hidden="true"></svg></section>
+</div>
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer"><button class="x" id="lx" aria-label="Close">✕</button><button class="pv" id="lp" aria-label="Previous photo">‹</button><div class="fr" id="lf"></div><button class="nx" id="ln" aria-label="Next photo">›</button><div class="ct" id="lc"></div></div>
+<div class="zz" id="zz"><div class="hh">❤️</div><h2 class="sc gold" id="zh" style="font-size:3rem">Thank you!</h2><p id="zt" style="font-size:1.3rem"></p><button class="bs" id="zw" style="display:none">SEND WISH ON WHATSAPP</button></div>
+<div id="pg"></div><div id="mph">Tap ▶ for birthday music 🎶</div>
+<div id="mp" role="group" aria-label="Music controls"><button id="mpp" aria-label="Play music">▶</button><i class="eq" aria-hidden="true"><b></b><b></b><b></b></i><button id="mpm" aria-label="Mute">🔊</button><input id="mpv" type="range" min="0" max="1" step=".05" value=".6" aria-label="Volume"></div>
+<div class="acts" id="acts"><button class="w" id="wa">SHARE ON WHATSAPP</button><button class="c" id="gc">ADD TO GOOGLE CALENDAR</button><button class="g" id="di">DOWNLOAD IMAGE</button><button class="g" id="dp">DOWNLOAD PDF</button><button class="w" style="background:linear-gradient(180deg,#e59aa9,#c4768a);box-shadow:0 5px 0 #a65a6e,0 10px 18px rgba(167,90,110,.3)" id="ce">🎉 CELEBRATE</button></div>
+
+<div id="evd" hidden data-name="{{ H.name }}" data-title="{{ v.title }}" data-date="{{ C.iso_date }}" data-time="{{ C.time }}" data-venue="{{ v.venue_name }}" data-address="{{ v.venue_addr }}" data-maps="{{ v.maps }}" data-code="{{ v.code }}" data-whatsapp="{{ C.whatsapp }}" data-long="{{ C.long }}" data-weekday="{{ C.weekday }}"></div>
+<canvas id="cf"></canvas><div id="toast"></div>
+<aside id="host"><b>EDIT DETAILS (this browser only)</b><input id="eT" placeholder="Time e.g. 6:30 PM"><input id="eV" placeholder="Venue name"><input id="eA" placeholder="Address (optional)"><input id="eM" placeholder="Google Maps link (optional)"><button id="es">SAVE</button><b>Photos (5 slots)</b><div id="hp"></div><b>Wishes: approve or reject</b><div id="mod"></div></aside>
+
+<script>
+/* ===== EDIT HERE: event details (or open the page with ?edit=1 to change them) ===== */
+const ED=document.getElementById('evd').dataset;
+const CONFIG={name:ED.name||'Our little star',date:ED.date||'',day:ED.weekday||'',time:'Evening',venue:'Venue to be announced',address:'',mapUrl:'',musicUrl:'',hostWhatsApp:ED.whatsapp||'',photos:[],
+ captions:['Little princess','Sunshine smiles','Giggles & joy','Sweet moments','Pure happiness']};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches;let CF={...CONFIG,time:ED.time||CONFIG.time,venue:ED.venue||CONFIG.venue,address:ED.address||'',mapUrl:ED.maps||''};
+function apply(){$$('.tT').forEach(e=>e.textContent=CF.time);$$('.vV').forEach(e=>e.textContent=CF.venue+(CF.address?' · '+CF.address:''));typeof apply2!=='undefined'&&apply2()}apply();
+/* ===== illustration (generated SVG) ===== */
+const qb=(a,b,c,t)=>[(1-t)*(1-t)*a[0]+2*(1-t)*t*b[0]+t*t*c[0],(1-t)*(1-t)*a[1]+2*(1-t)*t*b[1]+t*t*c[1]];
+const bunt=(a,b,c,n,cols)=>{let s=`<path d="M${a} Q${b} ${c}" fill="none" stroke="#c9964f" stroke-width="1.3"/>`;for(let i=0;i<n;i++){const p=qb(a,b,c,(i+.5)/n);s+=`<path class="fg" style="transform-origin:${p[0]}px ${p[1]}px;animation-delay:-${(i*.37).toFixed(2)}s" d="M${p[0]-9} ${p[1]} L${p[0]+9} ${p[1]} L${p[0]} ${p[1]+21}Z" fill="${cols[i%cols.length]}"/>`}return s};
+const tent=(x,y,s,p)=>`<g transform="translate(${x},${y}) scale(${s})"><line x1="100" y1="2" x2="100" y2="36" stroke="#c9964f" stroke-width="2"/><path d="M100 4L126 12L100 20Z" fill="#ff8fa3"/><path d="M100 36L6 106H194Z" fill="url(#${p})"/><path d="M6 106Q22 122 38 106Q54 122 70 106Q86 122 102 106Q118 122 134 106Q150 122 166 106Q182 122 194 106Z" fill="url(#${p})"/><rect x="18" y="106" width="164" height="70" fill="url(#${p})"/><path d="M78 176V134Q100 104 122 134V176Z" fill="#9b3d5a"/><path d="M78 134Q100 104 122 134" fill="none" stroke="#f3d9a0" stroke-width="3"/><path d="M100 36L6 106M100 36L194 106" stroke="#c9964f" stroke-width="1.6" opacity=".7"/><circle cx="100" cy="36" r="4.5" fill="#f3d9a0"/><rect x="14" y="174" width="172" height="6" rx="3" fill="#c9964f"/></g>`;
+const bl=(x,y,c,s=1,d=0)=>`<g class="bb" style="animation-delay:-${d}s"><path d="M${x} ${y+18*s}Q${x-5} ${y+46*s} ${x+3} ${y+78*s}" stroke="#fff" stroke-opacity=".85" fill="none"/><ellipse cx="${x}" cy="${y}" rx="${14*s}" ry="${18*s}" fill="${c}"/><ellipse cx="${x-5*s}" cy="${y-6*s}" rx="${3.4*s}" ry="${6*s}" fill="#fff" opacity=".55"/><path d="M${x-3} ${y+17*s}h6l-3 6z" fill="${c}"/></g>`;
+const rose=(x,y,s)=>`<g transform="translate(${x},${y}) scale(${s})"><ellipse cx="-14" cy="6" rx="10" ry="5" fill="#7fc77a" transform="rotate(-25 -14 6)"/><ellipse cx="14" cy="6" rx="10" ry="5" fill="#6bb868" transform="rotate(25 14 6)"/><circle r="13" fill="#ffc9d6"/><circle r="9.5" fill="#ff9db5"/><circle r="6" fill="#e76f93"/><path d="M-3 0q3-4 6 0q-3 4-6 0" fill="#c2547a"/></g>`;
+const star=(x,y,s,o=1)=>`<path d="M${x} ${y-6*s}L${x+1.6*s} ${y-1.6*s}L${x+6*s} ${y}L${x+1.6*s} ${y+1.6*s}L${x} ${y+6*s}L${x-1.6*s} ${y+1.6*s}L${x-6*s} ${y}L${x-1.6*s} ${y-1.6*s}Z" fill="#f3d9a0" opacity="${o}"/>`;
+const elephant=`<g class="el"><circle cx="78" cy="152" r="26" fill="url(#sr)" stroke="#c9964f" stroke-width="2"/><ellipse cx="78" cy="104" rx="46" ry="33" fill="#cfc6ea"/><rect x="46" y="116" width="17" height="30" rx="8" fill="#bfb4e0"/><rect x="92" y="116" width="17" height="30" rx="8" fill="#bfb4e0"/><path d="M33 96q-16 4-12 24" stroke="#bfb4e0" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M48 80Q80 60 112 80L108 100Q80 86 52 100Z" fill="#ff8fa3" stroke="#f3d9a0" stroke-width="2.5"/><circle cx="122" cy="80" r="28" fill="#d9d1f2"/><ellipse cx="106" cy="84" rx="15" ry="22" fill="#f2b4c8" stroke="#cfc6ea" stroke-width="3"/><path d="M142 90Q162 98 154 126Q150 134 143 126" stroke="#d9d1f2" stroke-width="11" fill="none" stroke-linecap="round"/><circle cx="130" cy="74" r="3.4" fill="#4a2f3a"/><circle cx="136" cy="86" r="5.5" fill="#ff9db5" opacity=".6"/><path d="M120 56L134 54L127 26Z" fill="#ffc84a" stroke="#fff" stroke-width="1.5"/><circle cx="127" cy="24" r="5" fill="#ff8fa3"/></g>`;
+const cornerB=`<path d="M45 70Q40 96 46 112" stroke="#c9964f" fill="none"/>${bl(30,34,'#ff8fa3',1.05)}${bl(58,26,'#8fb7f0',1)}${bl(44,58,'#f3c969',.9)}<path d="M38 104l7 6 7-6-3 10h-8z" fill="#ff8fa3"/>`;
+const lights=(()=>{let s='<path d="M-10 14Q200 52 410 14" fill="none" stroke="#a8732f" stroke-width="1"/>';for(let i=0;i<18;i++){const p=qb([-10,14],[200,52],[410,14],(i+.5)/18);s+=`<circle class="tw" style="animation-delay:-${(i*.31).toFixed(2)}s" cx="${p[0]}" cy="${p[1]+4}" r="9" fill="#ffe08a" opacity=".35"/><circle cx="${p[0]}" cy="${p[1]+4}" r="3.2" fill="#fff3b8"/>`}return s})();
+const wheel=(()=>{let s='<g class="fw"><circle cx="330" cy="205" r="46" fill="none" stroke="#c9964f" stroke-width="2.5"/><circle cx="330" cy="205" r="7" fill="#c9964f"/>';for(let i=0;i<8;i++){const a=i/8*6.283,x=330+Math.cos(a)*46,y=205+Math.sin(a)*46;s+=`<line x1="330" y1="205" x2="${x}" y2="${y}" stroke="#c9964f" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="6.5" fill="${['#ff8fa3','#fff4e6','#8fb7f0','#f3c969'][i%4]}" stroke="#c9964f"/>`}return s+'</g><path d="M330 205L304 262M330 205L356 262" stroke="#c9964f" stroke-width="3"/>'})();
+$('#sc').innerHTML=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4b6c8"/><stop offset=".5" stop-color="#fbd6d2"/><stop offset="1" stop-color="#fff0de"/></linearGradient><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde8d4"/><stop offset="1" stop-color="#f7c9cf"/></linearGradient>
+<pattern id="sr" width="24" height="10" patternUnits="userSpaceOnUse"><rect width="12" height="10" fill="#e9808f"/><rect x="12" width="12" height="10" fill="#fff4e6"/></pattern><pattern id="sl" width="24" height="10" patternUnits="userSpaceOnUse"><rect width="12" height="10" fill="#b9a8e6"/><rect x="12" width="12" height="10" fill="#fff4e6"/></pattern><pattern id="sp" width="20" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#f4b27a"/><rect x="10" width="10" height="10" fill="#fff4e6"/></pattern></defs>
+<rect width="400" height="470" fill="url(#sk)"/><g fill="#fff" opacity=".7"><ellipse cx="60" cy="100" rx="42" ry="12"/><ellipse cx="350" cy="92" rx="48" ry="13"/><ellipse cx="220" cy="132" rx="36" ry="9"/></g>
+${star(40,60,1.2)}${star(360,66,1)}${star(200,150,.8)}${star(120,190,.7)}${star(380,230,.9)}
+${wheel}<g opacity=".95">${tent(250,190,.72,'sp')}${tent(-38,150,1,'sr')}${tent(96,190,.95,'sl')}</g>
+<path d="M0 346Q200 322 400 346V470H0Z" fill="url(#gr)"/><path d="M0 370Q200 350 400 372" stroke="#fff" stroke-opacity=".6" stroke-width="2" fill="none"/>
+<g transform="translate(246,308) scale(.56)">${elephant}</g>
+${bunt([-10,112],[200,172],[410,112],14,['#ff8fa3','#fff4e6','#e9808f','#f3c969','#b9a8e6'])}${bunt([-10,160],[200,96],[410,160],14,['#fff4e6','#ff8fa3','#8fb7f0','#e9808f'])}${lights}
+${bl(40,360,'#ff8fa3',1.15,0)}${bl(70,345,'#8fb7f0',1.1,1)}${bl(22,330,'#f3c969',1,2)}${bl(92,372,'#b9a8e6',.95,1.5)}${bl(360,365,'#ff8fa3',1,.5)}${bl(335,350,'#f3c969',1.1,2.2)}${bl(380,340,'#8fb7f0',.9,1)}
+${rose(18,440,1.3)}${rose(50,452,1)}${rose(382,440,1.3)}${rose(350,452,1)}${rose(200,456,.9)}${star(150,400,1)}${star(300,420,.8)}`;
+$$('svg.cl,svg.cr').forEach(s=>s.innerHTML=cornerB);
+/* ===== effects ===== */
+const cf=$('#cf'),cx=cf.getContext('2d');let P=[];const rs=()=>{cf.width=innerWidth;cf.height=innerHeight};rs();addEventListener('resize',rs);
+const CC=['#ff8fa3','#f4b6c8','#f3d9a0','#c9964f','#fff4e6','#8fb7f0','#b9a8e6','#ffc84a'];
+function confetti(n=140,x=innerWidth/2,y=innerHeight*.45){if(RM)n=25;for(let i=0;i<n;i++){const a=Math.random()*6.283,s=4+Math.random()*9;P.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-5,r:Math.random()*6,vr:Math.random()*.3-.15,c:CC[i%8],l:130+Math.random()*60,w:5+Math.random()*5,h:8+Math.random()*6})}}
+(function lp(){requestAnimationFrame(lp);cx.clearRect(0,0,cf.width,cf.height);P=P.filter(p=>p.l-->0);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.22;p.vx*=.99;p.r+=p.vr;cx.save();cx.globalAlpha=Math.min(1,p.l/40);cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()})})();
+function balloons(n=12){if(RM)n=4;for(let i=0;i<n;i++){const b=document.createElement('div');b.className='fb2';const c=CC[(i*3)%8];b.style.cssText=`left:${Math.random()*92}vw;background:radial-gradient(circle at 35% 30%,#fff8,${c} 45%);--dx:${(Math.random()*80-40)|0}px;animation-duration:${5+Math.random()*4}s;animation-delay:${Math.random()*1.2}s`;document.body.appendChild(b);setTimeout(()=>b.remove(),11000)}}
+const celebrate=()=>{typeof Mus!=='undefined'&&Mus.pop();confetti();setTimeout(()=>confetti(90,innerWidth*.2,innerHeight*.5),250);setTimeout(()=>confetti(90,innerWidth*.8,innerHeight*.5),450);balloons()};
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
+/* ===== envelope ===== */
+let opened=false;const env=$('#env'),eb=$('#eb');
+function open_(){if(opened)return;opened=true;const k=RM?.25:1;eb.classList.add('o');typeof Mus!=='undefined'&&Mus.open();setTimeout(()=>confetti(60),900*k);setTimeout(()=>{env.classList.add('x');$('#stage').classList.add('show');document.body.classList.add('on');setTimeout(()=>{const h=$('#mph');h.classList.add('s');setTimeout(()=>h.classList.remove('s'),6000)},2500);document.body.classList.remove('lock');scrollTo(0,0);celebrate()},2000*k)}
+eb.onclick=open_;eb.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();open_()}};
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});$$('.rv').forEach(e=>io.observe(e));
+/* ===== actions ===== */
+const url=()=>location.origin+location.pathname,when=()=>CF.time&&CF.time!=CONFIG.time?' at '+CF.time:' (evening)';
+$('#wa').onclick=()=>open('https://wa.me/?text='+encodeURIComponent('🎈 You’re Invited! 🎈\nLet’s celebrate the birthday of '+CONFIG.name.toUpperCase()+'\n📅 '+ED.weekday+', '+ED.long+when()+(CF.venue&&CF.venue!=CONFIG.venue?'\n📍 '+CF.venue:'')+'\nCelebrate this special day with us!\n'+url()),'_blank');
+function parseT(){const m=/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i.exec(CF.time||'');if(!m||CF.time==CONFIG.time||!/[:]|am|pm/i.test(CF.time))return null;let h=+m[1];const mi=+(m[2]||0),ap=(m[3]||'').toLowerCase();if(ap=='pm'&&h<12)h+=12;if(ap=='am'&&h==12)h=0;return[h,mi]}
+$('#gc').onclick=()=>{const d=CF.date.replace(/-/g,''),t=parseT(),p=n=>String(n).padStart(2,'0');let dates=d+'/'+String(+d+1);if(t){dates=d+'T'+p(t[0])+p(t[1])+'00/'+d+'T'+p((t[0]+3)%24)+p(t[1])+'00'}open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent((ED.title||CONFIG.name+'’s Birthday Celebration'))+'&dates='+dates+'&details='+encodeURIComponent('Celebrate this special day with us!')+'&location='+encodeURIComponent([CF.venue!=CONFIG.venue?CF.venue:'',CF.address].filter(Boolean).join(', ')),'_blank')};
+const lib=u=>new Promise((r,j)=>{if(document.querySelector(`script[src="${u}"]`)&&window.html2canvas)return r();const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)});
+async function snap(){toast('Preparing…');await lib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');document.body.classList.add('cap');$('#stage').style.transform='none';try{return await html2canvas($('#sheet'),{scale:2,useCORS:true,backgroundColor:'#fff6ea',windowWidth:Math.max(innerWidth,480)})}finally{document.body.classList.remove('cap')}}
+$('#di').onclick=async()=>{try{const c=await snap();c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=CONFIG.name.replace(/\W+/g,'-')+'-Birthday-Invitation.png';document.body.appendChild(a);a.click();a.remove();toast('Image downloaded ✓')})}catch(e){toast('Could not create the image. Please try again.')}};
+$('#dp').onclick=async()=>{try{const c=await snap();await new Promise((r,j)=>{if(window.jspdf)return r();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';s.onload=r;s.onerror=j;document.head.appendChild(s)});const w=c.width/2,h=c.height/2,pdf=new window.jspdf.jsPDF({unit:'px',format:[w,h],orientation:h>w?'p':'l'});pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,w,h);pdf.save(CONFIG.name.replace(/\W+/g,'-')+'-Birthday-Invitation.pdf');toast('PDF downloaded ✓')}catch(e){toast('Could not create the PDF. Please try again.')}};
+$('#ce').onclick=celebrate;
+
+/* ===== PREMIUM ADD-ONS ===== */
+/* Backend contract (EventAgent): window.EVENT_API_BASE →
+   GET /wishes?status=approved|all; POST /wishes {name,msg}; PATCH /wishes/:id {status}. Host routes need server-side auth.
+   Without a base, a LOCAL driver (this browser only, NOT shared between guests) is used for preview. */
+const WU=()=>fetch('/js/config.js').then(r=>r.text()).then(t=>(t.match(/API_URL:\s*'([^']+)'/)||[])[1]||'').catch(()=>'');
+const API={async r(m,p,b){const u=await WU();if(!u)return LC(m,p,b);
+ if(m=='GET'){const j=await (await fetch(u+'?action=wishes&code='+encodeURIComponent(ED.code))).json();return((j.data&&j.data.wishes)||[]).map(w=>({id:w.id,name:w.name,msg:w.msg,status:'approved'}))}
+ if(m=='POST'){const j=await (await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'wish',code:ED.code,name:b.name,msg:b.msg})})).json();if(!j.ok)throw Error('wish');return{ok:1}}
+ return{ok:1}}};
+function LC(m,p,b){const [a,q]=p.split('?'),G=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));const w=G('hm_w6',[]);
+ if(a=='/wishes'){if(m=='POST'){w.unshift({id:Date.now(),name:b.name,msg:b.msg,status:'approved'});S('hm_w6',w);return{ok:1}}return /approved/.test(q||'')?w.filter(x=>x.status=='approved'):w}
+ if(a.startsWith('/wishes/')){const x=w.find(v=>v.id==a.split('/')[2]);if(x)x.status=b.status;S('hm_w6',w);return{ok:1}}
+}
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),HOST=document.body.classList.contains('edit');
+/* --- music + sound effects (original synthesized instrumental; no third-party audio) --- */
+const Mus=(()=>{let A,M,pl=false,mu=false,vol=.6,tm,i=0,nx=0,au;const BT=.6;
+ const ctx=()=>{if(!A){A=new(window.AudioContext||webkitAudioContext)();M=A.createGain();M.connect(A.destination);set()}if(A.state=='suspended')A.resume();return A};
+ const set=()=>{if(M)M.gain.value=mu?0:vol;if(au){au.volume=vol;au.muted=mu}};
+ const bell=(f,t,v=.12,d=1.2)=>{const o=A.createOscillator(),o2=A.createOscillator(),g=A.createGain();o.frequency.value=f;o2.frequency.value=f*2.01;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);o2.connect(g);g.connect(M);o.start(t);o2.start(t);o.stop(t+d);o2.stop(t+d)};
+ const BS=[130.8,110,174.6,196,130.8,110,174.6,196],CD=[[261.6,329.6,392],[261.6,329.6,440],[261.6,349.2,440],[246.9,293.7,392]],ML=[[659,0,784],[880,784,659],[698,659,523],[587,0,784],[784,659,523],[659,0,523],[698,880,698],[784,587,494]];
+ const beat=(n,t)=>{const bar=Math.floor(n/3)%8,b=n%3;if(b==0)bell(BS[bar],t,.16,1.6);else CD[bar%4].forEach((f,k)=>bell(f,t+k*.03,.05,.9));const m=ML[bar][b];if(m)bell(m,t,.11,1.3)};
+ const sched=()=>{while(nx<A.currentTime+.4){beat(i++,nx);nx+=BT}};
+ const ui=()=>{$('#mpp').textContent=pl?'❚❚':'▶';$('#mpp').setAttribute('aria-label',pl?'Pause music':'Play music');$('#mp').classList.toggle('pl',pl);$('#mpm').textContent=mu||vol==0?'🔇':'🔊'};
+ const start=()=>{ctx();if(CONFIG.musicUrl&&!au){au=new Audio(CONFIG.musicUrl);au.loop=true;au.onerror=()=>{au=null;CONFIG.musicUrl='';if(pl)start()}}set();if(au&&CONFIG.musicUrl){au.play().catch(()=>{});}else{nx=A.currentTime+.1;clearInterval(tm);tm=setInterval(sched,100)}pl=true;ui()};
+ const stop=()=>{clearInterval(tm);au&&au.pause();pl=false;ui()};
+ const sfx=(fs,gap=.11,v=.12)=>{try{ctx();fs.forEach((f,k)=>bell(f,A.currentTime+.02+k*gap,v,1.1))}catch(e){}};
+ $('#mpp').onclick=()=>pl?stop():start();$('#mpm').onclick=()=>{mu=!mu;set();ui()};$('#mpv').oninput=e=>{vol=+e.target.value;mu=false;set();ui()};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&pl){clearInterval(tm);au&&au.pause()}else if(pl){start()}});
+ return{open:()=>sfx([784,988,1319,1568],.12,.14),pop:()=>sfx([1047,1319,1568],.07,.1),tick:()=>sfx([1319],0,.05),wish:()=>sfx([988,1319,1568,1976],.1,.1)}})();
+/* --- scroll progress + bunting dividers --- */
+const cols=['#ff8fa3','#fff4e6','#e9808f','#f3c969','#b9a8e6'];$$('.dv').forEach(s=>s.innerHTML=bunt([0,4],[200,30],[400,4],14,cols));
+const pg=$('#pg');addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;pg.style.transform=`scaleX(${h>0?Math.min(1,scrollY/h):0})`},{passive:true});
+/* --- countdown --- */
+let cdDone=false;function cdz(){if(!CF.date)return;const [y,m,d]=CF.date.split('-').map(Number),t=new Date(y,m-1,d)-new Date();if(t<=0){['d','h','m','s'].forEach(k=>$('#cd'+k).textContent='00');$('#cdn').textContent='🎉 TODAY IS THE DAY! 🎉';if(!cdDone){cdDone=true;celebrate()}return}const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];['d','h','m','s'].forEach((k,i)=>$('#cd'+k).textContent=String(v[i]).padStart(2,'0'))}cdz();setInterval(cdz,1000);
+/* --- gallery + lightbox --- */
+const NS=5;let UP=(()=>{try{return JSON.parse(localStorage.getItem('hm_ph6'))||[]}catch(e){return[]}})(),cur=0;
+const photo=i=>CONFIG.photos[i]||UP[i]||null,cap=i=>CONFIG.captions[i]||'';
+const phSvg=`<svg viewBox="0 0 100 90" aria-hidden="true">${bl(34,34,'#ff8fa3',1.2)}${bl(64,28,'#8fb7f0',1)}${star(50,78,1.3)}</svg><span>${esc(CONFIG.name)}’s photo</span>`;
+function gal(){$('#gg').innerHTML=Array.from({length:NS},(_,i)=>{const u=photo(i);return`<button class="gi rv zi" style="--d:${(i*.12).toFixed(2)}s" data-i="${i}" aria-label="Open photo ${i+1}">${u?`<img src="${u}" alt="${esc(CONFIG.name)} photo ${i+1}" loading="lazy" decoding="async">`:`<div class="ph">${phSvg}</div>`}${u&&cap(i)?`<span class="gc">${esc(cap(i))}</span>`:''}</button>`}).join('');$$('#gg .rv').forEach(e=>io.observe(e))}
+const lb=$('#lb'),lf=$('#lf');
+function show(i,dir){cur=(i+NS)%NS;lf.classList.add('sw');setTimeout(()=>{const u=photo(cur);lf.innerHTML=(u?`<img src="${u}" alt="${esc(CONFIG.name)} photo ${cur+1}">`:`<div class="ph">${phSvg}</div>`)+(cap(cur)?`<p>${esc(cap(cur))}</p>`:'');$('#lc').textContent=`${cur+1} / ${NS}`;lf.classList.remove('sw')},lb.classList.contains('on')?160:0);Mus.tick()}
+function lbOpen(i){lb.classList.add('on');document.body.style.overflow='hidden';show(i)}function lbClose(){lb.classList.remove('on');document.body.style.overflow=''}
+$('#gg').onclick=e=>{const b=e.target.closest('.gi');if(b)lbOpen(+b.dataset.i)};$('#lx').onclick=lbClose;$('#lp').onclick=()=>show(cur-1);$('#ln').onclick=()=>show(cur+1);lb.onclick=e=>{if(e.target==lb)lbClose()};
+addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key=='Escape')lbClose();if(e.key=='ArrowLeft')show(cur-1);if(e.key=='ArrowRight')show(cur+1)});
+let tx0=0,ty0=0;lb.addEventListener('touchstart',e=>{tx0=e.touches[0].clientX;ty0=e.touches[0].clientY},{passive:true});lb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx0,dy=e.changedTouches[0].clientY-ty0;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)show(cur+(dx<0?1:-1))},{passive:true});
+function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.src=r.result};r.readAsDataURL(file)}
+function hp(){$('#hp').innerHTML=Array.from({length:NS},(_,i)=>`<div>#${i+1} ${photo(i)?'✓':'–'} <input type="file" accept="image/*" data-i="${i}"></div>`).join('')}
+$('#hp').onchange=e=>{const i=+e.target.dataset.i,f=e.target.files[0];if(!f)return;shrink(f,d=>{UP[i]=d;try{localStorage.setItem('hm_ph6',JSON.stringify(UP))}catch(x){toast('Shown now, but browser storage is full')}gal();hp()})};
+gal();hp();(async()=>{const u=[1,2,3,4,5].map(n=>'/w/carnival/photo'+n+'.jpg');const ok=await Promise.all(u.map(x=>new Promise(r=>{const m=new Image();m.onload=()=>r(x);m.onerror=()=>r(null);m.src=x})));if(ok.some(Boolean)){CONFIG.photos=ok;gal();hp()}})();
+/* --- venue --- */
+function apply2(){const v=CF.venue&&CF.venue!=CONFIG.venue,a=CF.address,has=v||a,q=encodeURIComponent([v?CF.venue:'',a].filter(Boolean).join(', '));
+ $('#vnm').textContent=v?CF.venue:'Venue to be announced';$('#vad').textContent=a||'Full address will be shared soon';
+ const m=$('#vmap');m.innerHTML=has?`<iframe title="Map showing the venue" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${q}&output=embed"></iframe>`:'The map will appear here once the venue is added 📍';
+ $('#vdir').disabled=!has;$('#vopn').disabled=!(has||CF.mapUrl);$('#vdir').onclick=()=>open('https://www.google.com/maps/dir/?api=1&destination='+q,'_blank');$('#vopn').onclick=()=>open(CF.mapUrl||'https://www.google.com/maps/search/?api=1&query='+q,'_blank')}
+apply2();
+/* --- wishes --- */
+let lastW=null;$('#zw').onclick=e=>{e.stopPropagation();if(!lastW)return;open('https://wa.me/'+CONFIG.hostWhatsApp+'?text='+encodeURIComponent('🎂 Birthday wish for '+CONFIG.name+'\nFrom: '+lastW.n+'\n\n'+lastW.m),'_blank')};
+const thanks=(h,t)=>{$('#zw').style.display=lastW&&CONFIG.hostWhatsApp?'inline-block':'none';$('#zh').textContent=h;$('#zt').textContent=t;$('#zz').classList.add('on');Mus.wish();confetti(90);setTimeout(()=>{if(!(lastW&&CONFIG.hostWhatsApp))$('#zz').classList.remove('on')},3200)};$('#zz').onclick=()=>{$('#zz').classList.remove('on');lastW=null};
+async function wishes(){let all=[];try{all=await API.r('GET','/wishes?status='+(HOST?'all':'approved'))}catch(e){}$('#wg').innerHTML=all.filter(w=>w.status=='approved').map(w=>`<div class="wc"><b>${esc(w.name).toUpperCase()}</b><p>${esc(w.msg)}</p></div>`).join('')||'<p class="gnote" style="grid-column:1/-1">APPROVED WISHES WILL APPEAR HERE 🌸</p>';
+ if(HOST){$('#mod').innerHTML=all.filter(w=>w.status!='rejected').map(w=>`<div style="border-top:1px solid #eee;padding-top:6px"><b>${esc(w.name)}</b> (${w.status})<br>${esc(w.msg)}<br>${w.status=='pending'?`<button data-i="${w.id}" data-s="approved">Approve</button> `:''}<button data-i="${w.id}" data-s="rejected">Reject</button></div>`).join('')||'No wishes yet';
+}}
+$('#mod').onclick=async e=>{const b=e.target.closest('button');if(!b)return;try{await API.r('PATCH','/wishes/'+b.dataset.i,{status:b.dataset.s})}catch(x){toast('Failed')}wishes()};
+$('#wf').onsubmit=async e=>{e.preventDefault();const n=$('#wn').value.trim();const wm=$('#wm').value.trim();lastW={n,m:wm};try{await API.r('POST','/wishes',{name:n,msg:wm})}catch(x){toast('Could not send your wish. Please try again.');return}e.target.reset();thanks('Thank you, '+n+'!',CONFIG.hostWhatsApp?'Tap below to send your wish to '+CONFIG.name+'’s family 💕':'Your birthday wish has been sent 💕');wishes()};wishes();
+/* --- reuse existing actions --- */
+$('#calb').onclick=()=>$('#gc').click();$('#tshare').onclick=()=>$('#wa').click();$('#tdi').onclick=()=>$('#di').click();$('#tdp').onclick=()=>$('#dp').click();$('#ttop').onclick=()=>scrollTo({top:0,behavior:RM?'auto':'smooth'});
+$$('.more .rv').forEach(e=>io.observe(e));
+</script></body></html>

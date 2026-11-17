@@ -12,7 +12,7 @@
 <script type="module">
 /* portal.preview: the REAL invitation design with what the host is typing (nothing is saved). */
 import { renderPage, sampleView, previewRsvp } from '/js/invite-render.js';
-const DESIGNS = ['lace', 'garden', 'indian', 'birthday', 'classic'];
+const DESIGNS = ['lace', 'garden', 'indian', 'birthday', 'carnival', 'classic'];
 const a = new URLSearchParams(location.search);
 const clean = (s, n) => String(s || '').split(/\s+/).filter(Boolean).join(' ').slice(0, n);
 const design = a.get('design') || '';
