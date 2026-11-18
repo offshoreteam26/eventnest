@@ -10,7 +10,7 @@
  * The Google Sheet address is read from public/js/config.js, so it stays in one place.
  * ===================================================================== */
 const ROBOTS = /facebookexternalhit|facebookcatalog|meta-externalagent|WhatsApp|Twitterbot|Slackbot|TelegramBot|LinkedInBot|Discordbot|SkypeUriPreview|Pinterest|redditbot|Applebot|Googlebot|bingbot|Embedly|iframely|vkShare|Viber|Snapchat|Line\//i;
-const DESIGNS = ['classic', 'lace', 'garden', 'indian', 'birthday', 'carnival'];
+const DESIGNS = ['classic', 'lace', 'garden', 'indian', 'birthday', 'carnival', 'flight'];
 const FOR_STYLE = { party: 'birthday', festival: 'indian', toran: 'indian', mandala: 'indian', floral: 'lace', classic: 'lace', goldwash: 'lace', arch: 'garden', peach: 'garden' };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 

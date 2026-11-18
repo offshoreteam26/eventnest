@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ v.title }}</title>
+<meta name="description" content="{{ v.description }}">
+<meta property="og:type" content="website"><meta property="og:title" content="{{ v.og_title or v.title }}"><meta property="og:description" content="{{ v.description }}">{% if v.page_url %}<meta property="og:url" content="{{ v.page_url }}">{% endif %}{% if v.og_image %}<meta property="og:image" content="{{ v.og_image }}">{% endif %}<meta name="theme-color" content="#050b1f">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0f2a52;--sky:#4fb0ff;--or:#ff7a3d;--ye:#ffc93c;--paper:#fffdf6;--ink:#0f2a52;--bg:#7cc8ff}
+*{box-sizing:border-box;margin:0}html{overflow-x:clip}
+@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{background:#050b1f;color:var(--ink);font:500 1.06rem/1.55 Outfit,sans-serif;overflow-x:clip;min-height:100dvh}body.lock{overflow:hidden}
+.bb{font-family:'Bebas Neue',Impact,sans-serif}.mo{font-family:'DM Mono',monospace}
+/* day sky */
+#sky,#sset{position:fixed;inset:0;z-index:0;pointer-events:none}#sky{background:linear-gradient(180deg,#2f9bff 0%,#7cc8ff 45%,#e2f4ff 100%);overflow:hidden}#sset{background:linear-gradient(180deg,#3b2a7a 0%,#c8508a 38%,#ff8a4d 72%,#ffd27a 100%);opacity:0}
+.cld{position:absolute;left:var(--x);top:var(--y);width:var(--w);height:calc(var(--w)*.32);background:#fff;border-radius:99px;opacity:.92;animation:dr var(--t) linear infinite;animation-delay:var(--dl);transform:translateY(var(--py,0))}.cld:before,.cld:after{content:"";position:absolute;background:#fff;border-radius:50%}.cld:before{width:42%;height:150%;left:14%;bottom:30%}.cld:after{width:34%;height:120%;right:16%;bottom:35%}
+@keyframes dr{from{margin-left:-30vw}to{margin-left:130vw}}
+#sun{position:absolute;right:8%;top:7%;width:clamp(70px,14vw,130px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff7c2 30%,#ffd84d 60%,rgba(255,216,77,0) 72%);box-shadow:0 0 90px 40px rgba(255,224,120,.55);animation:sn 6s ease-in-out infinite}@keyframes sn{50%{box-shadow:0 0 120px 60px rgba(255,224,120,.7)}}
+#pg{position:fixed;top:0;left:0;height:4px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#ffc93c,#ff7a3d);z-index:130}
+main{position:relative;z-index:2;transition:opacity 1.6s .3s}body.lock main{opacity:0}
+#fxc{position:fixed;inset:0;width:100%;height:100%;z-index:120;pointer-events:none}
+/* buttons */
+.btn{cursor:pointer;min-height:50px;border:0;color:#fff;background:linear-gradient(180deg,#ff9a5c,#ff6a28);padding:.8rem 1.5rem;border-radius:14px;font:400 1.25rem 'Bebas Neue';letter-spacing:.12em;box-shadow:0 5px 0 #c4491a,0 12px 22px rgba(255,106,40,.35);touch-action:manipulation;text-decoration:none;display:inline-block;transition:transform .15s,box-shadow .15s}.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #c4491a}.btn.n{background:linear-gradient(180deg,#2a4f8c,#0f2a52);box-shadow:0 5px 0 #08162e,0 12px 22px rgba(15,42,82,.35)}.btn.w{background:#fff;color:var(--navy);box-shadow:0 5px 0 #b9d6ee,0 12px 22px rgba(15,42,82,.2)}.btn[disabled]{opacity:.5;pointer-events:none}
+.pulse{animation:pu 1.6s ease-in-out infinite}@keyframes pu{50%{transform:scale(1.07);box-shadow:0 5px 0 #c4491a,0 0 40px 10px rgba(255,154,92,.7)}}
+/* NIGHT CHECK-IN */
+#open{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(16px,3vh,28px);padding:0 5vw;text-align:center;background:radial-gradient(ellipse at 50% 110%,#26408f 0%,#0d1a47 45%,#050b1f 100%);overflow:hidden;transition:opacity 1.6s ease-in}#open.out{opacity:0;pointer-events:none}#open.gone{visibility:hidden}
+.st{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.2;animation:tw var(--t) ease-in-out infinite;animation-delay:var(--d)}@keyframes tw{50%{opacity:1;transform:scale(1.8)}}
+.mn{position:absolute;top:7%;right:9%;width:clamp(50px,10vw,90px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fffbe6,#f3e7b5 60%,#cfc08a);box-shadow:0 0 60px 20px rgba(255,248,200,.25)}
+.rw{position:absolute;left:0;right:0;bottom:0;height:20vh;background:linear-gradient(180deg,transparent,rgba(255,200,80,.1));overflow:hidden;perspective:300px}.rw i{position:absolute;bottom:14px;width:10px;height:10px;border-radius:50%;background:#ffd16a;box-shadow:0 0 14px 6px rgba(255,200,90,.7);animation:rl 1.2s ease-in-out infinite alternate;animation-delay:var(--d)}@keyframes rl{to{opacity:.35}}
+.cin{position:relative;font:400 clamp(18px,4.6vw,28px) 'Bebas Neue';letter-spacing:.3em;color:#fff;text-shadow:0 0 20px rgba(79,176,255,.8);transition:opacity .5s}
+.cin2{position:relative;font:500 .75rem 'DM Mono';letter-spacing:.2em;color:#8fb2e0;margin-top:-10px;transition:opacity .5s}
+.tk{position:relative;width:min(92vw,430px);background:linear-gradient(180deg,#fff,#f3faff);border-radius:20px;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.2),0 30px 80px rgba(0,0,0,.6),0 0 90px rgba(79,176,255,.35);transform:rotate(-2deg);animation:fl 5s ease-in-out infinite;transition:transform 1s cubic-bezier(.6,0,.9,.4),opacity 1s}@keyframes fl{50%{transform:rotate(-2deg) translateY(-10px)}}
+.tk.fly{animation:none;transform:translateY(-130vh) rotate(10deg) scale(.6);opacity:0}
+.tk:after{content:"";position:absolute;top:0;bottom:0;width:60px;left:-80px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-20deg);animation:sh 3.2s ease-in-out infinite}@keyframes sh{0%,40%{left:-80px}100%{left:120%}}
+.tk .hb{display:flex;justify-content:space-between;align-items:center;background:var(--navy);color:#fff;padding:10px 16px;font:400 1.2rem 'Bebas Neue';letter-spacing:.14em}.tk .hb i{font-style:normal;color:var(--ye)}
+.tk .bd{padding:18px 18px 16px;text-align:left}.tk small{display:block;font:500 .64rem 'DM Mono';letter-spacing:.2em;color:#6a86ad}.tk b{display:block;font:400 clamp(30px,8.4vw,42px)/1 'Bebas Neue';letter-spacing:.04em;margin-top:2px}.tk .row{display:flex;justify-content:space-between;gap:10px;margin-top:12px}
+.tk .row b{font-size:clamp(22px,6vw,30px)}.scan{position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,transparent,#37e08d,transparent);box-shadow:0 0 18px 6px rgba(55,224,141,.7);opacity:0;z-index:2}.scanning .scan{animation:sc 1s ease-in-out forwards}@keyframes sc{0%{top:0;opacity:1}100%{top:calc(100% - 5px);opacity:1}}
+.stamp{position:absolute;right:14px;bottom:62px;border:4px solid #1fbf6a;color:#1fbf6a;border-radius:10px;padding:2px 12px;font:400 1.8rem 'Bebas Neue';letter-spacing:.12em;transform:rotate(-14deg) scale(2.4);opacity:0;transition:transform .35s cubic-bezier(.3,1.6,.5,1),opacity .2s}.stamped .stamp{transform:rotate(-14deg) scale(1);opacity:.92}
+#open.go2 .btn,#open.go2 .cin,#open.go2 .cin2{opacity:0;pointer-events:none}
+#cn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 clamp(160px,50vw,420px)/1 'Bebas Neue';color:#fff;text-shadow:0 0 60px rgba(255,154,92,.9),6px 6px 0 var(--or);pointer-events:none}#cn.t{font-size:clamp(70px,22vw,200px);color:var(--ye);text-align:center;letter-spacing:.04em}#cn span{animation:cp .75s ease-out both}@keyframes cp{0%{transform:scale(2.6);opacity:0}25%{opacity:1}100%{transform:scale(.8);opacity:.0}}#cn.t span{animation:cp2 1s ease-out both}@keyframes cp2{0%{transform:scale(.3);opacity:0}30%{transform:scale(1.1);opacity:1}100%{transform:scale(1.5);opacity:0}}
+#open.shake{animation:shk .08s linear infinite}@keyframes shk{0%{transform:translate(3px,-2px)}25%{transform:translate(-3px,2px)}50%{transform:translate(2px,3px)}75%{transform:translate(-2px,-3px)}}
+#flash{position:fixed;inset:0;background:#fff;z-index:140;opacity:0;pointer-events:none}#flash.on{animation:fs 1.4s ease-out}@keyframes fs{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+/* plane */
+#plane{position:fixed;left:0;top:0;z-index:150;pointer-events:none;opacity:0;width:clamp(90px,16vw,150px)}#plane svg{width:100%;display:block;transform:scaleX(-1);filter:drop-shadow(0 8px 10px rgba(0,0,0,.4))}#plane:before{content:"";position:absolute;right:70%;top:50%;height:7px;width:60vw;margin-top:-3px;background:linear-gradient(270deg,rgba(255,255,255,.95),rgba(255,255,255,0));border-radius:6px}
+#plane.go{animation:fly 2.4s cubic-bezier(.5,0,.8,.6) forwards}@keyframes fly{0%{opacity:1;transform:translate(-20vw,78vh) rotate(-8deg) scale(.8)}100%{opacity:1;transform:translate(120vw,-14vh) rotate(-16deg) scale(1.6)}}
+/* banner plane */
+#bn{position:fixed;left:0;top:15vh;z-index:3;display:flex;align-items:center;width:max-content;pointer-events:none;opacity:0;filter:drop-shadow(0 8px 10px rgba(15,42,82,.3))}#bn svg{width:clamp(70px,12vw,110px);flex:none}#bn .rp{width:clamp(26px,5vw,60px);border-top:3px solid var(--navy);flex:none}#bn .bg{background:#fff;border:4px solid var(--navy);border-left-width:8px;padding:.15rem 1.4rem .15rem 1.1rem;font:400 clamp(22px,5.4vw,40px) 'Bebas Neue';letter-spacing:.14em;color:var(--or);white-space:nowrap;clip-path:polygon(0 0,100% 0,96% 50%,100% 100%,0 100%);animation:wv 1.6s ease-in-out infinite}@keyframes wv{50%{transform:skewY(2deg)}}
+#bn.go{animation:bf 17s linear forwards}@keyframes bf{0%{opacity:1;transform:translate(100vw,0)}50%{transform:translate(-10vw,-14px)}100%{opacity:1;transform:translate(-110%,0)}}
+/* sections */
+.sec{position:relative;padding:clamp(56px,10vw,96px) 5vw;text-align:center}.in-w{max-width:1100px;margin:0 auto}
+.hd{display:inline-flex;align-items:center;gap:10px;background:var(--navy);color:var(--ye);padding:.45rem 1.2rem;border-radius:10px;font:400 clamp(20px,5vw,30px) 'Bebas Neue';letter-spacing:.18em;box-shadow:0 6px 0 rgba(8,22,46,.6)}.hd svg{width:22px;fill:var(--ye)}
+.lead{font-size:clamp(17px,4.2vw,21px);max-width:640px;margin:14px auto 0;background:rgba(255,255,255,.82);padding:.7rem 1.1rem;border-radius:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s,transform .8s;transition-delay:var(--d,0s)}.rv.in{opacity:1;transform:none}
+/* hero */
+#hero{padding-top:clamp(40px,9vh,90px)}#sheet{padding:clamp(24px,5vw,44px) clamp(14px,3vw,30px);background:linear-gradient(180deg,#5eb8ff,#c9e9ff);border-radius:30px;position:relative;overflow:hidden}
+.eb{font:500 clamp(10px,2.8vw,14px) 'DM Mono';letter-spacing:.22em;color:var(--navy);background:rgba(255,255,255,.85);display:inline-block;padding:.4rem .9rem;border-radius:8px}
+.nm{font:400 clamp(58px,min(19vw,20vh),190px)/.9 'Bebas Neue';letter-spacing:.02em;color:var(--navy);text-shadow:4px 4px 0 var(--or);margin-top:14px}.nm .l2{display:block;font-size:.6em;color:#fff;text-shadow:4px 4px 0 var(--navy);margin-top:4px}.nm .w{display:inline-block;white-space:nowrap;margin:0 .1em}.nm span.c{display:inline-block;opacity:0;transform:translateY(80px) rotate(14deg) scale(.4);transition:opacity .7s,transform .9s cubic-bezier(.2,1.5,.4,1);transition-delay:calc(var(--i)*.06s + 1s)}body.go .nm span.c{opacity:1;transform:none}
+body.go .nm span.c{animation:bob 3s ease-in-out infinite;animation-delay:calc(var(--i)*.12s + 2.5s)}@keyframes bob{50%{transform:translateY(-6px)}}
+.hbd{font:400 clamp(26px,7vw,48px) 'Bebas Neue';letter-spacing:.2em;margin-top:8px;background:linear-gradient(90deg,#ff7a3d,#ffc93c,#ff6fa0,#4fb0ff,#ff7a3d);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:rb 5s linear infinite}@keyframes rb{to{background-position:300% 0}}
+.sub{font:400 clamp(20px,5vw,32px) 'Bebas Neue';letter-spacing:.22em;color:var(--navy);margin:6px 0 clamp(18px,4vw,30px)}
+.cap-line{font:500 .8rem 'DM Mono';letter-spacing:.12em;color:var(--navy);background:rgba(255,255,255,.8);display:inline-block;padding:.4rem .9rem;border-radius:8px;margin-bottom:18px;min-height:2em}.cap-line:after{content:"▍";animation:bl .8s steps(1) infinite}@keyframes bl{50%{opacity:0}}
+.pass{display:grid;max-width:980px;margin:0 auto;text-align:left;filter:drop-shadow(0 20px 26px rgba(15,42,82,.3));position:relative;transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s}@media(min-width:820px){.pass{grid-template-columns:1fr 230px}}
+.pm{background:radial-gradient(circle at 0 100%,transparent 16px,#fff 17px) left/51% 100% no-repeat,radial-gradient(circle at 100% 100%,transparent 16px,#fff 17px) right/51% 100% no-repeat;border-radius:22px 22px 0 0;overflow:hidden;padding-bottom:22px}
+.ps{background:radial-gradient(circle at 0 0,transparent 16px,#fff 17px) left/51% 100% no-repeat,radial-gradient(circle at 100% 0,transparent 16px,#fff 17px) right/51% 100% no-repeat;border-radius:0 0 22px 22px;padding:26px 20px 18px;display:flex;flex-direction:column;gap:10px;justify-content:space-between;position:relative}.ps:before{content:"";position:absolute;left:24px;right:24px;top:0;border-top:3px dashed #c5d8ec}
+@media(min-width:820px){.pm{background:radial-gradient(circle at 100% 0,transparent 16px,#fff 17px) top/100% 51% no-repeat,radial-gradient(circle at 100% 100%,transparent 16px,#fff 17px) bottom/100% 51% no-repeat;border-radius:22px 0 0 22px;padding-bottom:20px}.ps{background:radial-gradient(circle at 0 0,transparent 16px,#fff 17px) top/100% 51% no-repeat,radial-gradient(circle at 0 100%,transparent 16px,#fff 17px) bottom/100% 51% no-repeat;border-radius:0 22px 22px 0}.ps:before{left:0;right:auto;top:24px;bottom:24px;border-top:0;border-left:3px dashed #c5d8ec}}
+.pm .hb{display:flex;justify-content:space-between;align-items:center;background:var(--navy);color:#fff;padding:12px 20px;font:400 1.3rem 'Bebas Neue';letter-spacing:.16em}.pm .hb i{font-style:normal;color:var(--ye)}.pm .ln{height:6px;background:repeating-linear-gradient(90deg,var(--or) 0 14px,var(--ye) 14px 28px)}
+.gr{display:grid;grid-template-columns:repeat(2,1fr);gap:16px 14px;padding:20px 20px 4px}@media(min-width:560px){.gr{grid-template-columns:repeat(3,1fr)}}.gr .s2{grid-column:1/-1}
+.gr small,.ps small{display:block;font:500 .62rem 'DM Mono';letter-spacing:.22em;color:#6a86ad}.gr b,.ps b{display:block;font:400 clamp(22px,5.4vw,30px)/1.1 'Bebas Neue';letter-spacing:.05em;margin-top:2px;overflow-wrap:anywhere}.gr .s2 b{font-size:clamp(30px,8vw,46px)}
+.route{display:flex;align-items:center;gap:12px;padding:6px 20px;font:400 clamp(34px,9vw,52px) 'Bebas Neue'}.route i{flex:1;border-top:3px dotted #9bb7d4;position:relative}.route i:after{content:"✈";position:absolute;left:0;top:-17px;font-style:normal;font-size:1.4rem;color:var(--or);animation:rt 3.5s ease-in-out infinite}@keyframes rt{0%{left:0}100%{left:calc(100% - 1.4rem)}}
+.bar{height:58px;background:repeating-linear-gradient(90deg,#0f2a52 0 2px,transparent 2px 4px,#0f2a52 4px 5px,transparent 5px 8px,#0f2a52 8px 11px,transparent 11px 12px,#0f2a52 12px 13px,transparent 13px 15px)}
+.apv{position:absolute;right:22px;top:92px;border:4px solid var(--or);color:var(--or);border-radius:10px;padding:0 12px;font:400 clamp(20px,4vw,30px) 'Bebas Neue';letter-spacing:.12em;transform:rotate(-12deg);opacity:.85;pointer-events:none;mix-blend-mode:multiply}
+/* countdown flaps */
+.dep{display:inline-block;background:#0b1a33;border-radius:18px;padding:clamp(16px,3vw,26px);margin-top:28px;box-shadow:0 18px 40px rgba(15,42,82,.4);border:3px solid #1d3a6a}.dep .t{font:500 .72rem 'DM Mono';letter-spacing:.3em;color:var(--ye);margin-bottom:14px}.fg{display:flex;gap:clamp(8px,2.4vw,24px);justify-content:center}.gp{text-align:center}.gp .ds{display:flex;gap:4px}.gp span.lb{display:block;margin-top:8px;font:500 .6rem 'DM Mono';letter-spacing:.2em;color:#8fb2e0}
+.fp{position:relative;width:clamp(30px,8.4vw,56px);height:clamp(44px,12vw,80px);background:linear-gradient(180deg,#1a2f55 50%,#13264a 50%);border-radius:7px;color:#fff;font:500 clamp(26px,7.4vw,48px) 'DM Mono';display:flex;align-items:center;justify-content:center;overflow:hidden}.fp:after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:#050c1a}.fp b{display:block;transform-origin:50% 100%}.fp.f b{animation:fp .5s ease-out}@keyframes fp{0%{transform:rotateX(-90deg);opacity:0}100%{transform:none;opacity:1}}
+.tmr{font:400 clamp(26px,6vw,40px) 'Bebas Neue';letter-spacing:.14em;color:var(--or);background:rgba(255,255,255,.9);display:inline-block;padding:.2rem 1rem;border-radius:10px;margin-top:18px}
+/* CAKE */
+.ck{max-width:420px;margin:26px auto 0;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent}.ck svg{width:100%;display:block;filter:drop-shadow(0 18px 20px rgba(15,42,82,.3))}
+.fl{transform-origin:50% 100%;transform-box:fill-box;animation:fk .35s ease-in-out infinite alternate}.fl:nth-child(2n){animation-delay:-.15s}@keyframes fk{from{transform:scale(1,1) rotate(-3deg)}to{transform:scale(.88,1.15) rotate(3deg)}}
+.ck.off .fl{opacity:0;transition:opacity .3s}.ck .sm{opacity:0}.ck.off .sm{animation:smk 1.8s ease-out both}@keyframes smk{0%{opacity:.7;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}
+.ck .glow{opacity:1;transition:opacity .6s}.ck.off .glow{opacity:0}
+.wsh{font:600 clamp(26px,6vw,36px) Caveat;color:var(--navy);margin-top:14px;min-height:1.4em}
+/* polaroids */
+.pgrid{display:flex;flex-wrap:wrap;gap:clamp(18px,3vw,34px);justify-content:center;margin-top:36px;padding:0 2vw}
+.pl{all:unset;box-sizing:border-box;position:relative;width:clamp(150px,40vw,230px);background:#fff;padding:10px 10px 0;border-radius:4px;box-shadow:0 14px 30px rgba(15,42,82,.3);transform:rotate(var(--r,0deg));transition:transform .4s cubic-bezier(.2,1.2,.4,1),box-shadow .4s;cursor:pointer;-webkit-tap-highlight-color:transparent}.pl:hover,.pl:focus-visible{transform:rotate(0) translateY(-10px) scale(1.05);box-shadow:0 24px 44px rgba(15,42,82,.4);z-index:3}
+.pl:first-child{width:clamp(200px,60vw,290px)}.pl .tp{position:absolute;top:-12px;left:50%;width:70px;height:24px;margin-left:-35px;background:rgba(255,224,130,.8);transform:rotate(-3deg)}
+.pl .im{aspect-ratio:4/5;background:linear-gradient(180deg,#7cc8ff,#e2f4ff);overflow:hidden;display:flex;align-items:center;justify-content:center}.pl img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}.pl .ph{text-align:center;font:500 .72rem 'DM Mono';letter-spacing:.14em;color:#2a5f9e}.pl .ph svg{width:56%;fill:#fff;display:block;margin:0 auto 6px;opacity:.95}
+.pl .cp{display:block;font:600 1.3rem Caveat;text-align:center;padding:8px 4px 10px;min-height:42px;color:var(--navy)}
+.lbx{position:fixed;inset:0;z-index:160;background:rgba(8,22,46,.94);display:none;align-items:center;justify-content:center;touch-action:pan-y}.lbx.on{display:flex;animation:fi .35s}@keyframes fi{from{opacity:0}}
+.lbx .fm{max-width:94vw;max-height:84vh;display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .35s,transform .35s}.lbx .fm.sw{opacity:0;transform:scale(.96)}.lbx img{max-width:94vw;max-height:76vh;object-fit:contain;border:10px solid #fff;border-bottom-width:30px;border-radius:4px;box-shadow:0 20px 60px #000}.lbx .ph{width:min(80vw,360px);aspect-ratio:4/5;background:linear-gradient(180deg,#7cc8ff,#e2f4ff);border:10px solid #fff;border-bottom-width:30px;display:flex;align-items:center;justify-content:center;color:#2a5f9e;font:500 .9rem 'DM Mono';text-align:center}.lbx .ph svg{width:50%;fill:#fff;display:block;margin:0 auto 8px}.lbx p{color:#fff;font:600 1.6rem Caveat;text-align:center}
+.lbx button{position:absolute;width:52px;height:52px;border-radius:50%;border:2px solid #fff;background:rgba(255,255,255,.15);color:#fff;font-size:1.5rem;cursor:pointer;touch-action:manipulation}.lbx .x{top:calc(env(safe-area-inset-top,0px) + 14px);right:14px}.lbx .pv{left:10px;top:50%;margin-top:-26px}.lbx .nx{right:10px;top:50%;margin-top:-26px}.lbx .ct{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);left:0;right:0;text-align:center;color:#fff;font:500 .8rem 'DM Mono';letter-spacing:.25em}
+/* destination */
+.vg{display:grid;gap:22px;margin-top:30px;text-align:left}@media(min-width:900px){.vg{grid-template-columns:1fr 1.25fr;align-items:center;gap:36px}}
+.card{background:var(--paper);border-radius:20px;padding:clamp(20px,4vw,30px);box-shadow:0 16px 36px rgba(15,42,82,.25)}.vi small{display:block;font:500 .64rem 'DM Mono';letter-spacing:.22em;color:#6a86ad;margin:14px 0 2px}.vi small:first-child{margin-top:0}.vi b{font:400 clamp(28px,6.4vw,40px)/1.05 'Bebas Neue';letter-spacing:.04em;display:block}.vi p{font-size:clamp(16px,4vw,19px)}
+.map{aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:8px solid #fff;box-shadow:0 16px 36px rgba(15,42,82,.3);background:linear-gradient(135deg,#d9f0ff,#bfe4ff);position:relative;display:flex;align-items:center;justify-content:center;text-align:center;font:500 .85rem 'DM Mono';letter-spacing:.1em;color:#2a5f9e;padding:16px}.map iframe{width:100%;height:100%;border:0;position:absolute;inset:0}.map svg{position:absolute;inset:0;width:100%;height:100%;opacity:.75}
+/* postcards */
+.wsx{display:grid;gap:26px;margin-top:30px}@media(min-width:900px){.wsx{grid-template-columns:1fr 1.15fr;align-items:start}}
+.pcf{background:var(--paper);border-radius:8px;padding:22px 20px;text-align:left;box-shadow:0 16px 36px rgba(15,42,82,.25);position:relative;display:flex;flex-direction:column;gap:12px}.pcf:before{content:"";position:absolute;inset:8px;border:2px dashed #e2c9a0;border-radius:4px;pointer-events:none}.pcf .to{font:600 1.5rem Caveat;color:var(--or)}
+input,textarea{font:500 1.02rem Outfit;padding:.8rem 1rem;border-radius:10px;border:2px solid #cfe2f4;background:#fff;color:var(--ink);width:100%;position:relative}input:focus,textarea:focus{outline:0;border-color:var(--or)}
+.wg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(250px,100%),1fr));gap:16px;text-align:left;max-height:520px;overflow:auto;padding:6px;align-content:start}
+.pc{position:relative;background:var(--paper);background-image:repeating-linear-gradient(transparent 0 27px,#e6dcc3 27px 28px);padding:16px 62px 16px 16px;border-radius:6px;box-shadow:0 10px 22px rgba(15,42,82,.22);animation:wi .8s both;min-height:120px}.pc b{font:600 1.35rem Caveat;color:var(--or);display:block}.pc p{font:600 1.2rem/28px Caveat;color:var(--navy)}.pc:after{content:"✈";position:absolute;top:10px;right:10px;width:42px;height:52px;border:2px dashed var(--or);display:flex;align-items:center;justify-content:center;color:var(--or);font-size:1.2rem}@keyframes wi{from{opacity:0;transform:translateY(18px) rotate(-2deg)}}
+/* thanks */
+.tk2{max-width:760px;margin:0 auto;background:var(--paper);border-radius:26px;padding:clamp(28px,6vw,52px) clamp(18px,5vw,40px);box-shadow:0 24px 50px rgba(0,0,0,.35);position:relative}.tk2 h2{font:400 clamp(52px,13vw,110px)/.95 'Bebas Neue';letter-spacing:.03em;color:var(--navy);text-shadow:4px 4px 0 var(--ye)}.tk2 p{font-size:clamp(17px,4.2vw,21px);margin:14px auto 0;max-width:560px}.sig{font:600 clamp(26px,6vw,36px) Caveat;color:var(--or);margin-top:8px}
+.bt{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+#thanks{padding-bottom:clamp(110px,18vw,150px)}
+.zz{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(124,200,255,.94);text-align:center;padding:20px}.zz.on{display:flex;animation:fi .4s}.zz h2{font:400 clamp(44px,11vw,80px) 'Bebas Neue';color:var(--navy);text-shadow:3px 3px 0 var(--ye)}.zz .hh{font-size:4rem;animation:fl2 1.4s ease-in-out infinite}@keyframes fl2{50%{transform:translateY(-12px) rotate(8deg)}}
+#mp{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:125;display:none;align-items:center;gap:4px;padding:5px 8px;border-radius:40px;background:#fff;border:3px solid var(--navy);box-shadow:0 8px 20px rgba(15,42,82,.35)}body.on #mp{display:flex}#mp button{width:44px;height:44px;border-radius:50%;border:0;background:linear-gradient(180deg,#ff9a5c,#ff6a28);color:#fff;font-size:1rem;cursor:pointer;touch-action:manipulation}#mp #mpm{background:none;font-size:1.15rem}#mp input{width:70px;accent-color:var(--or);height:30px;padding:0;border:0;background:none}@media(min-width:600px){#mp input{width:96px}}
+.eq{display:flex;gap:2px;align-items:flex-end;height:20px;width:20px}.eq b{flex:1;background:var(--or);border-radius:2px;height:4px}.pl2 .eq b{animation:eq .8s ease-in-out infinite alternate}.pl2 .eq b:nth-child(2){animation-delay:-.3s}.pl2 .eq b:nth-child(3){animation-delay:-.6s}@keyframes eq{to{height:20px}}
+#mph{position:fixed;right:14px;bottom:calc(env(safe-area-inset-bottom,0px) + 72px);z-index:125;background:#fff;border:2px solid var(--navy);border-radius:12px;padding:.45rem .9rem;font:500 .85rem 'DM Mono';opacity:0;transform:translateY(8px);transition:.5s;pointer-events:none}#mph.s{opacity:1;transform:none}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:.7rem 1.2rem;border-radius:12px;z-index:170;font:500 .9rem 'DM Mono';display:none;max-width:90vw;text-align:center}
+#host{position:fixed;left:8px;bottom:8px;z-index:180;width:min(330px,94vw);max-height:62vh;overflow:auto;background:#fff;color:#0f2a52;border:3px solid var(--or);border-radius:14px;padding:12px;font:.85rem Outfit;display:none;flex-direction:column;gap:6px}.edit #host{display:flex}#host input{padding:.45rem;font-size:.85rem}#host button{padding:.45rem;border:0;border-radius:8px;background:var(--or);color:#fff;font:400 1rem 'Bebas Neue';letter-spacing:.1em;cursor:pointer}
+.cap *{animation:none!important;transition:none!important}.cap .rv,.cap .nm span.c{opacity:1!important;transform:none!important}.cap .pass{transform:none!important;filter:none!important}.cap .cap-line{display:none}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+.bd b,.s2 b{text-transform:uppercase}</style></head>
+<body class="lock">
+<div id="sky"><div id="sun"></div></div><div id="sset"></div><div id="pg"></div><div id="evd" hidden data-name="{{ H.name }}" data-title="{{ v.title }}" data-date="{{ C.iso_date }}" data-time="{{ C.time }}" data-venue="{{ v.venue_name }}" data-address="{{ v.venue_addr }}" data-maps="{{ v.maps }}" data-code="{{ v.code }}" data-whatsapp="{{ C.whatsapp }}"></div>
+<canvas id="fxc"></canvas><div id="flash"></div>
+<div id="plane"><svg viewBox="0 0 114 60"><path d="M2 30L38 25 56 4 66 4 58 24 92 22 104 12 110 12 104 26 112 30 104 34 110 48 104 48 92 38 58 36 66 56 56 56 38 35Z" fill="#fff" stroke="#0f2a52" stroke-width="2.5" stroke-linejoin="round"/><path d="M2 30L16 28 16 32Z" fill="#ff7a3d"/><circle cx="20" cy="30" r="2.4" fill="#4fb0ff"/></svg></div>
+<div id="bn" aria-hidden="true"><svg viewBox="0 0 114 60"><path d="M2 30L38 25 56 4 66 4 58 24 92 22 104 12 110 12 104 26 112 30 104 34 110 48 104 48 92 38 58 36 66 56 56 56 38 35Z" fill="#fff" stroke="#0f2a52" stroke-width="2.5" stroke-linejoin="round"/><path d="M2 30L16 28 16 32Z" fill="#ff7a3d"/><circle cx="20" cy="30" r="2.4" fill="#4fb0ff"/></svg><i class="rp"></i><div class="bg">HAPPY BIRTHDAY {{ C.short }} 🎉</div></div>
+
+<div id="open"><div class="mn"></div><div class="rw" id="rw"></div>
+ <p class="cin">BIRTHDAY AIRLINES · NIGHT FLIGHT</p><p class="cin2">GATE OPEN · YOUR SEAT IS WAITING</p>
+ <div class="tk" id="tk"><div class="hb"><span>✈ BIRTHDAY AIRLINES</span><i>BOARDING PASS</i></div><div class="scan"></div><div class="bd"><small>PASSENGER</small><b>{{ H.name }}</b><div class="row"><div><small>FROM</small><b>YOU</b></div><div><small>TO</small><b>THE PARTY</b></div><div><small>CLASS</small><b>VIP GUEST</b></div></div></div><div class="stamp">CHECKED IN</div></div>
+ <button class="btn pulse" id="rev">TAP TO CHECK IN ✈</button><div id="cn"></div></div>
+
+<main id="stage">
+<section class="sec" id="hero"><div class="in-w"><div id="sheet">
+ <span class="eb">YOU ARE CORDIALLY INVITED TO THE BIRTHDAY OF</span>
+ <h1 class="nm" id="nm" aria-label="{{ H.name }}"></h1><p class="hbd">★ HAPPY BIRTHDAY ★</p><p class="sub">NOW BOARDING · A CELEBRATION TO REMEMBER</p>
+ <p class="cap-line" id="cap">&nbsp;</p>
+ <div class="pass"><div class="pm"><div class="hb"><span>✈ BIRTHDAY AIRLINES</span><i>BOARDING PASS</i></div><div class="ln"></div>
+   <div class="gr"><div class="s2"><small>PASSENGER</small><b>{{ H.name }}</b></div><div><small>DATE</small><b id="pD">{{ C.dmy_up }}</b></div><div><small>DAY</small><b id="pW">{{ C.weekday_up }}</b></div><div><small>BOARDING TIME</small><b class="tT">Evening</b></div><div class="s2"><small>DESTINATION · VENUE</small><b class="vV">Venue to be announced</b></div></div>
+   <div class="route"><span>YOU</span><i></i><span>PARTY</span></div><div class="apv">YOU’RE INVITED</div></div>
+  <div class="ps"><div><small>ADMIT ONE</small><b>GUEST OF HONOUR’S<br>BIRTHDAY</b></div><div><small>FLIGHT</small><b id="pF">{{ C.flight }}</b></div><div><div class="bar"></div><small style="margin-top:6px;text-align:center">{{ C.slug }}</small></div></div></div>
+</div></div></section>
+
+<section class="sec" id="count"><div class="in-w"><span class="hd rv"><svg viewBox="0 0 24 24"><path d="M2 14l8-2 5-9h2l-2 9 6 1v2l-6 1 2 9h-2l-5-8-8-2z"/></svg>DEPARTURES</span>
+ <div class="rv"><div class="dep"><p class="t mo">BOARDING STARTS IN</p><div class="fg" id="fg"></div></div></div><p class="lead rv" id="cdn" style="font-family:'DM Mono';font-size:.85rem;letter-spacing:.14em"></p></div></section>
+
+<section class="sec" id="cakes"><div class="in-w"><span class="hd rv">MAKE A WISH 🎂</span><p class="lead rv">Close your eyes, make a wish, then tap the cake to blow the candles!</p>
+ <div class="ck rv" id="ck" role="button" tabindex="0" aria-label="Blow out the candles">
+ <svg viewBox="0 0 300 270" aria-hidden="true">
+  <ellipse cx="150" cy="250" rx="130" ry="14" fill="#0f2a52" opacity=".2"/><ellipse cx="150" cy="238" rx="125" ry="16" fill="#fff"/><ellipse cx="150" cy="234" rx="112" ry="12" fill="#e8f3ff"/>
+  <rect x="40" y="170" width="220" height="62" rx="8" fill="#ff7a3d"/><path d="M40 178q12 18 26 0t26 0 26 0 26 0 26 0 26 0 26 0 26 0v-8H40z" fill="#fff"/>
+  <rect x="68" y="120" width="164" height="54" rx="8" fill="#ffc93c"/><path d="M68 128q10 16 21 0t21 0 21 0 21 0 21 0 21 0 21 0 21 0v-8H68z" fill="#fff"/>
+  <rect x="98" y="78" width="104" height="46" rx="8" fill="#ff6fa0"/><path d="M98 86q9 14 17 0t17 0 17 0 17 0 17 0 17 0v-8H98z" fill="#fff"/>
+  <circle cx="80" cy="205" r="5" fill="#fff"/><circle cx="130" cy="210" r="5" fill="#ffc93c"/><circle cx="180" cy="205" r="5" fill="#fff"/><circle cx="225" cy="210" r="5" fill="#ffc93c"/><circle cx="110" cy="150" r="4" fill="#ff7a3d"/><circle cx="150" cy="154" r="4" fill="#fff"/><circle cx="190" cy="150" r="4" fill="#ff7a3d"/>
+  <g id="cds"></g></svg></div>
+ <p class="wsh" id="wsh">Tap the cake ✨</p></div></section>
+
+<section class="sec" id="gallery"><div class="in-w"><span class="hd rv">TRAVEL MEMORIES</span><div class="pgrid" id="pg2"></div><p class="lead rv" style="font-family:'DM Mono';font-size:.8rem;letter-spacing:.12em">TAP A PHOTO TO ENLARGE · SWIPE TO BROWSE</p></div></section>
+
+<section class="sec" id="venue"><div class="in-w"><span class="hd rv">YOUR DESTINATION</span>
+ <div class="vg"><div class="card vi rv"><small>VENUE</small><b id="vnm">Venue to be announced</b><small>ADDRESS</small><p id="vad">Full address will be shared soon</p><small>DATE &amp; BOARDING TIME</small><p><span id="vdt"></span> · <span class="tT">Evening</span></p><div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="vdir">GET DIRECTIONS</button><button class="btn n" id="vopn">OPEN IN GOOGLE MAPS</button></div></div>
+ <div class="map rv" id="vmap"></div></div></div></section>
+
+<section class="sec" id="wishes"><div class="in-w"><span class="hd rv">POSTCARDS</span><p class="lead rv">Send a birthday wish to {{ H.name }}.</p>
+ <div class="wsx"><form class="pcf rv" id="wf"><p class="to">To: {{ H.name }}</p><input id="wn" maxlength="40" placeholder="From (your name)" required><textarea id="wm" rows="4" maxlength="220" placeholder="Write your birthday wish…" required></textarea><button class="btn" type="submit">SEND POSTCARD ✈</button></form><div class="wg" id="wg"></div></div></div></section>
+
+<section class="sec" id="thanks"><div class="in-w"><div class="tk2 rv"><span class="hd" style="margin-bottom:18px">LANDED SAFELY</span><h2>Thanks for Flying With Us</h2><p>Thank you for being part of this special day. Your presence, blessings and warm wishes mean the world to us.</p><p class="sig">With love &amp; gratitude ✈</p>
+ <div class="bt"><button class="btn" id="wa">SHARE ON WHATSAPP</button><button class="btn n" id="gc">ADD TO CALENDAR</button><button class="btn w" id="di">DOWNLOAD IMAGE</button><button class="btn w" id="dp">DOWNLOAD PDF</button><button class="btn w" id="ce">🎉 CELEBRATE</button></div></div></div></section>
+</main>
+
+<div class="lbx" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer"><button class="x" id="lx" aria-label="Close">✕</button><button class="pv" id="lp" aria-label="Previous photo">‹</button><div class="fm" id="lf"></div><button class="nx" id="ln" aria-label="Next photo">›</button><div class="ct" id="lc"></div></div>
+<div class="zz" id="zz"><div class="hh">✈️</div><h2 id="zh">Thank you!</h2><p id="zt" style="font-size:1.2rem"></p><button class="btn n" id="zw" style="display:none">SEND WISH ON WHATSAPP</button></div>
+<div id="mph">Music playing 🎶 · tap ❚❚ to pause</div>
+<div id="mp" role="group" aria-label="Music controls"><button id="mpp" aria-label="Play music">▶</button><i class="eq" aria-hidden="true"><b></b><b></b><b></b></i><button id="mpm" aria-label="Mute">🔊</button><input id="mpv" type="range" min="0" max="1" step=".05" value=".6" aria-label="Volume"></div>
+<div id="toast"></div>
+<aside id="host"><b>EDIT DETAILS (this browser only)</b><input id="eT" placeholder="Time e.g. 7:00 PM"><input id="eV" placeholder="Venue name"><input id="eA" placeholder="Address"><input id="eM" placeholder="Google Maps link (optional)"><button id="es">SAVE</button><b>Photos (5 slots)</b><div id="hp"></div><b>Wishes: approve or reject</b><div id="mod"></div></aside>
+
+<script>
+/* ===== EDIT HERE: event details (or open the page with ?edit=1) ===== */
+const ED=document.getElementById('evd').dataset;
+const CONFIG={name:ED.name||'Our guest of honour',date:ED.date||new Date().toISOString().slice(0,10),time:'Evening',venue:'Venue to be announced',address:'',mapUrl:'',musicUrl:'',hostWhatsApp:ED.whatsapp||'',photos:[],captions:['','','','','']};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion:reduce)').matches,HOST=false;if(HOST)document.body.classList.add('edit');
+const G=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return 1}catch(e){return 0}};
+let CF={...CONFIG,time:ED.time||CONFIG.time,venue:ED.venue||CONFIG.venue,address:ED.address||'',mapUrl:ED.maps||''};const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const dobj=()=>{const [y,m,d]=CF.date.split('-').map(Number);return new Date(y,m-1,d)};
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',2600)}
+/* night: stars + runway lights */
+{let h='';for(let i=0;i<80;i++)h+=`<i class="st" style="left:${Math.random()*100}%;top:${Math.random()*70}%;--t:${2+Math.random()*3}s;--d:-${Math.random()*4}s"></i>`;$('#open').insertAdjacentHTML('afterbegin',h);
+ let r='';for(let i=0;i<14;i++)r+=`<i style="left:${4+i*7}%;--d:-${(i%5)*.25}s"></i>`;$('#rw').innerHTML=r}
+/* clouds */
+{let h='';for(let i=0;i<9;i++)h+=`<i class="cld" data-p="${(.04+i%4*.04).toFixed(2)}" style="--x:${(i*13-10)%100}%;--y:${6+i*10}%;--w:${90+(i*37)%120}px;--t:${50+i*9}s;--dl:-${i*7}s"></i>`;$('#sky').insertAdjacentHTML('beforeend',h)}
+/* name */
+{let i=0;$('#nm').innerHTML=(()=>{const w=CONFIG.name.toUpperCase().split(/\s+/).filter(Boolean);return w.length>2?[w[0],w.slice(1).join(' ')]:w})().map((ln,li)=>`<span class="${li?'l2':''}" style="display:block">${ln.split(' ').map(w=>`<span class="w">${[...w].map(c=>`<span class="c" style="--i:${i++}">${c}</span>`).join('')}</span>`).join(' ')}</span>`).join('')}
+/* details */
+const MON=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function apply(){const D=dobj(),mo=D.toLocaleDateString('en-GB',{month:'long'}),wd=D.toLocaleDateString('en-GB',{weekday:'long'});$('#pD').textContent=D.getDate()+' '+MON[D.getMonth()]+' '+D.getFullYear();$('#pW').textContent=wd.toUpperCase();$('#pF').textContent='BD'+String(D.getDate()).padStart(2,'0')+String(D.getMonth()+1).padStart(2,'0');$('#vdt').textContent=wd+', '+D.getDate()+' '+mo+' '+D.getFullYear();
+ $$('.tT').forEach(e=>e.textContent=CF.time);$$('.vV').forEach(e=>e.textContent=CF.venue);
+ const v=CF.venue&&CF.venue!=CONFIG.venue,a=CF.address,has=v||a,q=encodeURIComponent([v?CF.venue:'',a].filter(Boolean).join(', '));
+ $('#vnm').textContent=v?CF.venue:'Venue to be announced';$('#vad').textContent=a||'Full address will be shared soon';
+ $('#vmap').innerHTML=has?`<iframe title="Map showing the venue" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=${q}&output=embed"></iframe>`:`<svg viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true"><path d="M30 250C110 200 120 120 200 150S320 60 372 40" fill="none" stroke="#ff7a3d" stroke-width="4" stroke-dasharray="4 10" stroke-linecap="round"/><circle cx="372" cy="40" r="9" fill="#ff7a3d"/><circle cx="30" cy="250" r="7" fill="#0f2a52"/></svg><span style="position:relative;background:rgba(255,255,255,.85);padding:.5rem .9rem;border-radius:8px">MAP APPEARS ONCE THE VENUE IS ADDED 📍</span>`;
+ $('#vdir').disabled=!has;$('#vopn').disabled=!(has||CF.mapUrl);$('#vdir').onclick=()=>open('https://www.google.com/maps/dir/?api=1&destination='+q,'_blank');$('#vopn').onclick=()=>open(CF.mapUrl||'https://www.google.com/maps/search/?api=1&query='+q,'_blank')}
+/* confetti + fireworks + balloons */
+const cv=$('#fxc'),cx=cv.getContext('2d');let P=[];const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};rs();addEventListener('resize',rs);
+const CC=['#ff7a3d','#ffc93c','#4fb0ff','#ffffff','#0f2a52','#37e08d','#ff6fa0'];
+function conf(n=130,x=innerWidth/2,y=innerHeight*.45){if(RM)n=25;for(let i=0;i<n;i++){const a=Math.random()*6.283,s=4+Math.random()*9;P.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-6,l:130+Math.random()*60,c:CC[i%7],w:5+Math.random()*5,h:8+Math.random()*6,r:Math.random()*6,vr:Math.random()*.3-.15})}}
+function fw(x=Math.random()*innerWidth,y=innerHeight*(.15+Math.random()*.35)){if(RM)return;const c1=CC[(Math.random()*7)|0],c2=CC[(Math.random()*7)|0];Mus.boom();for(let i=0;i<80;i++){const a=i/80*6.283,s=2+Math.random()*4.5;P.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,l:70+Math.random()*40,c:i%2?c1:c2,s:1})}}
+const fwShow=(n=6)=>{for(let i=0;i<n;i++)setTimeout(()=>fw(innerWidth*(.12+Math.random()*.76)),i*380)};
+(function lp(){requestAnimationFrame(lp);if(!P.length){if(lp.e){cx.clearRect(0,0,cv.width,cv.height);lp.e=0}return}lp.e=1;cx.clearRect(0,0,cv.width,cv.height);P=P.filter(p=>p.l-->0);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.s){p.vy+=.05;p.vx*=.985;p.vy*=.985;cx.globalAlpha=Math.min(1,p.l/35);cx.fillStyle=p.c;cx.shadowColor=p.c;cx.shadowBlur=8;cx.beginPath();cx.arc(p.x,p.y,2.4,0,6.283);cx.fill();cx.shadowBlur=0}else{p.vy+=.22;p.vx*=.99;p.r+=p.vr;cx.globalAlpha=Math.min(1,p.l/50);cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore()}});cx.globalAlpha=1})();
+function balloons(n=10){if(RM)n=3;for(let i=0;i<n;i++){const b=document.createElement('i');const c=CC[i%7];b.style.cssText=`position:fixed;bottom:-130px;left:${Math.random()*92}vw;width:46px;height:58px;border-radius:50% 50% 48% 48%;z-index:119;pointer-events:none;background:radial-gradient(circle at 35% 30%,#fff9,${c} 45%);animation:up ${5+Math.random()*4}s ${Math.random()}s linear forwards;--dx:${(Math.random()*80-40)|0}px`;document.body.appendChild(b);setTimeout(()=>b.remove(),11000)}}
+document.head.insertAdjacentHTML('beforeend','<style>@keyframes up{to{transform:translateY(-135vh) translateX(var(--dx))}}</style>');
+const celebrate=()=>{Mus.pop();conf(150);setTimeout(()=>conf(90,innerWidth*.2,innerHeight*.5),250);setTimeout(()=>conf(90,innerWidth*.8,innerHeight*.5),500);fwShow(4);balloons()};
+/* ===== audio: original synthesized upbeat instrumental + effects ===== */
+const Mus=(()=>{let A,M,pl=false,mu=false,vol=.6,tm,i=0,nx=0,au;const BT=.5;
+ const ctx=()=>{if(!A){A=new(window.AudioContext||webkitAudioContext)();M=A.createGain();M.connect(A.destination);set()}if(A.state=='suspended')A.resume();return A};
+ const set=()=>{if(M)M.gain.value=mu?0:vol;if(au){au.volume=vol;au.muted=mu}};
+ const bell=(f,t,v=.12,d=1.1)=>{const o=A.createOscillator(),o2=A.createOscillator(),g=A.createGain();o.frequency.value=f;o2.type='triangle';o2.frequency.value=f*2.005;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);o2.connect(g);g.connect(M);o.start(t);o2.start(t);o.stop(t+d);o2.stop(t+d)};
+ const BS=[130.8,196,110,174.6,130.8,196,110,174.6],CD=[[329.6,392,523],[293.7,392,494],[261.6,329.6,440],[261.6,349.2,440]],ML=[[784,659,784],[587,0,784],[880,784,659],[698,659,523],[784,880,1047],[784,0,587],[659,880,659],[698,523,0]];
+ const beat=(n,t)=>{const bar=Math.floor(n/4)%8,b=n%4;if(b==0)bell(BS[bar],t,.16,1.4);else if(b==2)CD[bar%4].forEach((f,k)=>bell(f,t+k*.03,.045,.8));const m=ML[bar][b%3];if(m&&b!=3)bell(m,t,.1,.9)};
+ const sched=()=>{while(nx<A.currentTime+.4){beat(i++,nx);nx+=BT}};
+ const ui=()=>{$('#mpp').textContent=pl?'❚❚':'▶';$('#mpp').setAttribute('aria-label',pl?'Pause music':'Play music');$('#mp').classList.toggle('pl2',pl);$('#mpm').textContent=mu||vol==0?'🔇':'🔊'};
+ const start=()=>{ctx();if(CONFIG.musicUrl&&!au){au=new Audio(CONFIG.musicUrl);au.loop=true;au.onerror=()=>{au=null;CONFIG.musicUrl='';if(pl)start()}}set();if(au&&CONFIG.musicUrl){au.play().catch(()=>{})}else{nx=A.currentTime+.1;clearInterval(tm);tm=setInterval(sched,100)}pl=true;ui()};
+ const stop=()=>{clearInterval(tm);au&&au.pause();pl=false;ui()};
+ const sfx=(fs,gap=.11,v=.12)=>{try{ctx();fs.forEach((f,k)=>bell(f,A.currentTime+.02+k*gap,v,1.1))}catch(e){}};
+ const noise=(dur,f0,f1,pk,type='bandpass')=>{try{ctx();const b=A.createBuffer(1,A.sampleRate*dur,A.sampleRate),d=b.getChannelData(0);for(let k=0;k<d.length;k++)d[k]=Math.random()*2-1;const s=A.createBufferSource(),f=A.createBiquadFilter(),g=A.createGain(),n=A.currentTime;s.buffer=b;f.type=type;f.frequency.setValueAtTime(f0,n);f.frequency.exponentialRampToValueAtTime(f1,n+dur*.8);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(pk,n+dur*.55);g.gain.exponentialRampToValueAtTime(.0001,n+dur);s.connect(f).connect(g).connect(M);s.start()}catch(e){}};
+ $('#mpp').onclick=()=>pl?stop():start();$('#mpm').onclick=()=>{mu=!mu;set();ui()};$('#mpv').oninput=e=>{vol=+e.target.value;mu=false;set();ui()};
+ document.addEventListener('visibilitychange',()=>{if(document.hidden&&pl){clearInterval(tm);au&&au.pause()}else if(pl)start()});
+ return{start,ding:()=>sfx([1319,1760],.12,.14),open:()=>noise(2.6,250,2600,.4),roar:()=>noise(3,90,900,.5,'lowpass'),pop:()=>sfx([1047,1319,1568],.07,.1),tick:()=>sfx([1319],0,.05),beep:()=>sfx([880],0,.12),go:()=>sfx([1047,1568],.09,.14),wish:()=>sfx([988,1319,1568,1976],.1,.1),boom:()=>{noise(.5,1800,200,.25,'lowpass');sfx([1568+Math.random()*600],0,.04)},blow:()=>noise(.9,3000,500,.3)}})();
+/* ===== check-in -> countdown -> take-off ===== */
+let opened=false;const tk=$('#tk'),op=$('#open');
+function cnum(t,big){const c=$('#cn');c.className=big?'t':'';c.innerHTML=`<span>${t}</span>`}
+function checkin(){if(opened)return;opened=true;const k=RM?.2:1,T=(f,ms)=>setTimeout(f,ms*k);$('#rev').disabled=true;tk.classList.add('scanning');
+ T(()=>{tk.classList.add('stamped');Mus.ding()},950);
+ T(()=>{op.classList.add('go2');tk.classList.add('fly');Mus.roar()},1800);
+ T(()=>{cnum('3');Mus.beep()},2200);T(()=>{cnum('2');Mus.beep()},3000);T(()=>{cnum('1');Mus.beep();op.classList.add('shake')},3800);
+ T(()=>{cnum('TAKE<br>OFF!',1);Mus.go();Mus.open();$('#plane').classList.add('go');$('#flash').classList.add('on')},4600);
+ T(()=>{op.classList.remove('shake');op.classList.add('out');document.body.classList.add('go');document.body.classList.remove('lock');scrollTo(0,0);Mus.start();document.body.classList.add('on')},5000);
+ T(()=>{conf(160,innerWidth/2,innerHeight*.4);balloons(10);fwShow(7)},5700);
+ T(()=>{op.classList.add('gone');typeLine();banner();const h=$('#mph');h.classList.add('s');setTimeout(()=>h.classList.remove('s'),5000)},6900)}
+$('#rev').onclick=checkin;
+/* captain's announcement typewriter */
+function typeLine(){const L=['Captain speaking: today we fly to a birthday party ✈','Please fasten your seat belts & bring your biggest smile 😄','Cake, music and memories await on arrival 🎂'];let li=0,ci=0,el=$('#cap');(function tick(){const s=L[li];if(RM){el.textContent=s;return}if(ci<=s.length){el.textContent=s.slice(0,ci++);setTimeout(tick,38)}else{setTimeout(()=>{ci=0;li=(li+1)%L.length;tick()},2600)}})()}
+/* flying banner */
+function banner(){const b=$('#bn');if(RM)return;const run=()=>{b.classList.remove('go');void b.offsetWidth;b.classList.add('go')};run();setInterval(()=>{if(!document.hidden)run()},24000)}
+if(matchMedia('(pointer:fine)').matches&&!RM)addEventListener('pointermove',e=>{const p=$('.pass');p.style.setProperty('--ry',((e.clientX/innerWidth-.5)*5).toFixed(2)+'deg');p.style.setProperty('--rx',((.5-e.clientY/innerHeight)*3).toFixed(2)+'deg')});
+/* scroll: progress, sunset, cloud parallax, reveal */
+const pg=$('#pg'),ss=$('#sset'),cl=$$('.cld');addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight,p=h>0?Math.min(1,scrollY/h):0;pg.style.transform=`scaleX(${p})`;ss.style.opacity=Math.max(0,Math.min(1,(p-.78)/.2));cl.forEach(c=>c.style.setProperty('--py',-scrollY*c.dataset.p+'px'))},{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});$$('.rv').forEach(e=>io.observe(e));
+new IntersectionObserver(e=>{if(e[0].isIntersecting&&opened)celebrate()},{threshold:.6}).observe($('.tk2 h2'));
+/* ===== cake ===== */
+{let h='';for(let i=0;i<5;i++){const x=106+i*22;h+=`<rect x="${x-3}" y="52" width="6" height="28" rx="2" fill="${CC[i%3==0?0:i%3==1?1:2]}"/><g class="fl"><ellipse cx="${x}" cy="44" rx="5" ry="9" fill="#ffb33c"/><ellipse cx="${x}" cy="46" rx="2.6" ry="5.5" fill="#fff6b0"/></g><circle class="sm" cx="${x}" cy="40" r="5" fill="#9aa8bd"/>`}
+ $('#cds').innerHTML='<ellipse class="glow" cx="150" cy="50" rx="70" ry="40" fill="#ffd27a" opacity=".35"/>'+h}
+const ck=$('#ck'),WS=['Wish granted! 🎉 Happy Birthday!','May every dream come true ✨','Another amazing year begins 🎂'];let wi=0;
+function blow(){const off=ck.classList.toggle('off');if(off){Mus.blow();setTimeout(()=>{celebrate();$('#wsh').textContent=WS[wi++%WS.length]},500)}else{$('#wsh').textContent='Tap the cake ✨';Mus.tick()}}
+ck.onclick=blow;ck.onkeydown=e=>{if(e.key=='Enter'||e.key==' '){e.preventDefault();blow()}};
+/* ===== split-flap countdown ===== */
+$('#fg').innerHTML=[['d','DAYS'],['h','HOURS'],['m','MINS'],['s','SECS']].map(([k,l])=>`<div class="gp"><div class="ds"><div class="fp" id="${k}0"><b>0</b></div><div class="fp" id="${k}1"><b>0</b></div></div><span class="lb">${l}</span></div>`).join('');
+function setF(id,v){const e=$('#'+id),b=e.firstChild;if(b.textContent!=v){b.textContent=v;e.classList.remove('f');void e.offsetWidth;e.classList.add('f')}}
+let cdDone=false;function cd(){const t=dobj()-new Date();if(t<=0){['d','h','m','s'].forEach(k=>{setF(k+'0','0');setF(k+'1','0')});$('#cdn').textContent='✈ NOW BOARDING — TODAY IS THE DAY! ✈';if(!cdDone){cdDone=true;if(opened)celebrate()}return}
+ const v=[Math.floor(t/864e5),Math.floor(t/36e5)%24,Math.floor(t/6e4)%60,Math.floor(t/1e3)%60];['d','h','m','s'].forEach((k,i)=>{const s=String(v[i]).padStart(2,'0');setF(k+'0',s[0]);setF(k+'1',s[1])});$('#cdn').textContent='DEPARTURE: '+dobj().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}).toUpperCase()}cd();setInterval(cd,1000);
+/* ===== gallery + lightbox ===== */
+const NS=5,RT=[-4,3,-2,4,-3];let UP=G('ymgf_ph',[]),cur=0;const photo=i=>CF.photos[i]||UP[i]||null,cap=i=>CF.captions[i]||'';
+const PL='<svg viewBox="0 0 114 60" aria-hidden="true"><path d="M2 30L38 25 56 4 66 4 58 24 92 22 104 12 110 12 104 26 112 30 104 34 110 48 104 48 92 38 58 36 66 56 56 56 38 35Z"/></svg>PHOTO COMING SOON';
+function gal(){$('#pg2').innerHTML=Array.from({length:NS},(_,i)=>{const u=photo(i);return`<button class="pl rv" style="--r:${RT[i]}deg;--d:${(i*.1).toFixed(1)}s" data-i="${i}" aria-label="Open photo ${i+1}"><i class="tp"></i><div class="im">${u?`<img src="${u}" alt="Photo ${i+1}" loading="lazy" decoding="async">`:`<div class="ph">${PL}</div>`}</div><span class="cp">${esc(cap(i)||'')}</span></button>`}).join('');$$('#pg2 .rv').forEach(e=>io.observe(e))}
+const lb=$('#lb'),lf=$('#lf');
+function show(i){cur=(i+NS)%NS;lf.classList.add('sw');setTimeout(()=>{const u=photo(cur);lf.innerHTML=(u?`<img src="${u}" alt="Photo ${cur+1}">`:`<div class="ph"><div>${PL}</div></div>`)+(cap(cur)?`<p>${esc(cap(cur))}</p>`:'');$('#lc').textContent=`${cur+1} / ${NS}`;lf.classList.remove('sw')},lb.classList.contains('on')?160:0);Mus.tick()}
+const lbOpen=i=>{lb.classList.add('on');document.body.style.overflow='hidden';show(i)},lbClose=()=>{lb.classList.remove('on');document.body.style.overflow=document.body.classList.contains('lock')?'hidden':''};
+$('#pg2').onclick=e=>{const b=e.target.closest('.pl');if(b)lbOpen(+b.dataset.i)};$('#lx').onclick=lbClose;$('#lp').onclick=()=>show(cur-1);$('#ln').onclick=()=>show(cur+1);lb.onclick=e=>{if(e.target==lb)lbClose()};
+addEventListener('keydown',e=>{if(!lb.classList.contains('on'))return;if(e.key=='Escape')lbClose();if(e.key=='ArrowLeft')show(cur-1);if(e.key=='ArrowRight')show(cur+1)});
+let tx=0,ty=0;lb.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});lb.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)show(cur+(dx<0?1:-1))},{passive:true});
+const shrink=(f,cb)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.src=r.result};r.readAsDataURL(f)};
+function hp(){$('#hp').innerHTML=Array.from({length:NS},(_,i)=>`<div>#${i+1} ${photo(i)?'✓':'–'} <input type="file" accept="image/*" data-i="${i}"></div>`).join('')}
+$('#hp').onchange=e=>{const i=+e.target.dataset.i,f=e.target.files[0];if(!f)return;shrink(f,d=>{UP[i]=d;if(!S('ymgf_ph',UP))toast('Shown now, but browser storage is full');gal();hp()})};
+/* ===== wishes (name + wish only) ===== */
+/* Backend contract (EventAgent): window.EVENT_API_BASE → GET /wishes?status=approved|all · POST /wishes {name,msg} · PATCH /wishes/:id {status}. Host routes need server-side auth.
+   Without a base, a LOCAL driver (this browser only, NOT shared between guests) is used for preview. */
+const WU=()=>fetch('/js/config.js').then(r=>r.text()).then(t=>(t.match(/API_URL:\s*'([^']+)'/)||[])[1]||'').catch(()=>'');
+const API={async r(m,p,b){const u=await WU();if(!u)return LC(m,p,b);
+ if(m=='GET'){const j=await (await fetch(u+'?action=wishes&code='+encodeURIComponent(ED.code))).json();return((j.data&&j.data.wishes)||[]).map(w=>({id:w.id,name:w.name,msg:w.msg,status:'approved'}))}
+ if(m=='POST'){const j=await (await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'wish',code:ED.code,name:b.name,msg:b.msg})})).json();if(!j.ok)throw Error('wish');return{ok:1}}
+ return{ok:1}}};
+function LC(m,p,b){const [a,q]=p.split('?'),w=G('ymgf_w',[]);if(a=='/wishes'){if(m=='POST'){w.unshift({id:Date.now(),name:b.name,msg:b.msg,status:'approved'});S('ymgf_w',w);return{ok:1}}return /approved/.test(q||'')?w.filter(x=>x.status=='approved'):w}
+ if(a.startsWith('/wishes/')){const x=w.find(v=>v.id==a.split('/')[2]);if(x)x.status=b.status;S('ymgf_w',w);return{ok:1}}}
+let lastW=null;$('#zw').onclick=e=>{e.stopPropagation();if(lastW)open('https://wa.me/'+CONFIG.hostWhatsApp+'?text='+encodeURIComponent('🎂 Birthday wish for '+CONFIG.name+'\nFrom: '+lastW.n+'\n\n'+lastW.m),'_blank')};
+const thanks=(h,t)=>{$('#zw').style.display=lastW&&CONFIG.hostWhatsApp?'inline-block':'none';$('#zh').textContent=h;$('#zt').textContent=t;$('#zz').classList.add('on');Mus.wish();conf(90);fwShow(2);setTimeout(()=>{if(!(lastW&&CONFIG.hostWhatsApp))$('#zz').classList.remove('on')},3200)};$('#zz').onclick=()=>{$('#zz').classList.remove('on');lastW=null};
+async function wishes(){let all=[];try{all=await API.r('GET','/wishes?status='+(HOST?'all':'approved'))}catch(e){}$('#wg').innerHTML=all.filter(w=>w.status=='approved').map((w,i)=>`<div class="pc" style="transform:rotate(${(i%3-1)*1.2}deg)"><b>${esc(w.name)}</b><p>${esc(w.msg)}</p></div>`).join('')||'<p class="lead" style="grid-column:1/-1;font-family:\'DM Mono\';font-size:.8rem;letter-spacing:.12em">POSTCARDS WILL ARRIVE HERE ✈</p>';
+ if(HOST)$('#mod').innerHTML=all.filter(w=>w.status!='rejected').map(w=>`<div style="border-top:1px solid #eee;padding-top:6px"><b>${esc(w.name)}</b> (${w.status})<br>${esc(w.msg)}<br>${w.status=='pending'?`<button data-i="${w.id}" data-s="approved">Approve</button> `:''}<button data-i="${w.id}" data-s="rejected">Reject</button></div>`).join('')||'No wishes yet'}
+$('#mod').onclick=async e=>{const b=e.target.closest('button');if(!b)return;try{await API.r('PATCH','/wishes/'+b.dataset.i,{status:b.dataset.s})}catch(x){toast('Failed')}wishes()};
+$('#wf').onsubmit=async e=>{e.preventDefault();const n=$('#wn').value.trim(),m=$('#wm').value.trim();lastW={n,m};try{await API.r('POST','/wishes',{name:n,msg:m})}catch(x){toast('Could not send your wish. Please try again.');return}e.target.reset();thanks('Postcard sent!',CONFIG.hostWhatsApp?'Thank you, '+n+'! Tap below to send it to the family too':'Thank you, '+n+'! Your wish has landed ✈');wishes()};
+/* ===== share / calendar / download ===== */
+const fmt=()=>CF.time&&CF.time!=CONFIG.time?' at '+CF.time:' (evening)';
+$('#wa').onclick=()=>open('https://wa.me/?text='+encodeURIComponent('✈️ Your boarding pass is ready!\nYou’re invited to the Birthday Celebration of '+CONFIG.name+'\n📅 '+dobj().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+fmt()+(CF.venue&&CF.venue!=CONFIG.venue?'\n📍 '+CF.venue:'')+'\n'+location.origin+location.pathname),'_blank');
+function parseT(){const m=/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i.exec(CF.time||'');if(!m||CF.time==CONFIG.time||!/[:]|am|pm/i.test(CF.time))return null;let h=+m[1];const mi=+(m[2]||0),ap=(m[3]||'').toLowerCase();if(ap=='pm'&&h<12)h+=12;if(ap=='am'&&h==12)h=0;return[h,mi]}
+$('#gc').onclick=()=>{const D=dobj(),p=n=>String(n).padStart(2,'0'),d=''+D.getFullYear()+p(D.getMonth()+1)+p(D.getDate()),N=new Date(D.getTime()+864e5),d2=''+N.getFullYear()+p(N.getMonth()+1)+p(N.getDate()),t=parseT();let dates=d+'/'+d2;if(t)dates=d+'T'+p(t[0])+p(t[1])+'00/'+d+'T'+p((t[0]+3)%24)+p(t[1])+'00';open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent('Birthday Celebration – '+CONFIG.name+'')+'&dates='+dates+'&details='+encodeURIComponent('You are cordially invited.')+'&location='+encodeURIComponent([CF.venue!=CONFIG.venue?CF.venue:'',CF.address].filter(Boolean).join(', ')),'_blank')};
+const lib=(u,t)=>new Promise((r,j)=>{if(t())return r();const s=document.createElement('script');s.src=u;s.onload=r;s.onerror=j;document.head.appendChild(s)});
+async function snap(){toast('Preparing…');await lib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',()=>window.html2canvas);document.body.classList.add('cap');try{return await html2canvas($('#sheet'),{scale:2,useCORS:true,backgroundColor:'#7cc8ff'})}finally{document.body.classList.remove('cap')}}
+$('#di').onclick=async()=>{try{const c=await snap();c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=CONFIG.name.replace(/\W+/g,'-')+'-Boarding-Pass-Invitation.png';document.body.appendChild(a);a.click();a.remove();toast('Image downloaded ✓')})}catch(e){toast('Could not create the image. Please try again.')}};
+$('#dp').onclick=async()=>{try{const c=await snap();await lib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>window.jspdf);const w=c.width/2,h=c.height/2,pdf=new window.jspdf.jsPDF({unit:'px',format:[w,h],orientation:h>w?'p':'l'});pdf.addImage(c.toDataURL('image/jpeg',.92),'JPEG',0,0,w,h);pdf.save(CONFIG.name.replace(/\W+/g,'-')+'-Boarding-Pass-Invitation.pdf');toast('PDF downloaded ✓')}catch(e){toast('Could not create the PDF. Please try again.')}};
+$('#ce').onclick=celebrate;
+apply();gal();hp();wishes();(async()=>{const u=[1,2,3,4,5].map(n=>'/w/flight/photo'+n+'.jpg');const ok=await Promise.all(u.map(x=>new Promise(r=>{const m=new Image();m.onload=()=>r(x);m.onerror=()=>r(null);m.src=x})));if(ok.some(Boolean)){CONFIG.photos=ok;CF.photos=ok;gal();hp()}})();
+</script></body></html>

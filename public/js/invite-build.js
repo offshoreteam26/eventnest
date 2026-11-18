@@ -9,7 +9,7 @@
  * dress_code and rsvp_by. Anything left empty keeps the design's own default text.
  * ===================================================================== */
 
-export const DESIGNS = Object.freeze(['classic', 'lace', 'garden', 'indian', 'birthday', 'carnival']);
+export const DESIGNS = Object.freeze(['classic', 'lace', 'garden', 'indian', 'birthday', 'carnival', 'flight']);
 
 /** Which design a card style suggests when the host didn't pick one (Events tab → web_design). */
 const DESIGN_FOR_STYLE = Object.freeze({
@@ -185,6 +185,16 @@ function carnival(v, x = {}) {
   return { H, C };
 }
 
+/* ---------- flight (boarding-pass birthday; Events tab -> web_design = flight) ---------- */
+function flight(v, x = {}) {
+  const { H, C } = carnival(v, x);
+  const words = String(H.name || '').trim().split(/\s+/).filter(Boolean);
+  const mon = C.mm ? MONTHS[+C.mm - 1].slice(0, 3).toUpperCase() : '';
+  Object.assign(C, { short: (words[words.length - 1] || '').toUpperCase(), slug: words.join('-').toUpperCase(),
+                     flight: C.mm ? 'BD' + C.dd + C.mm : 'BD', dmy_up: C.dd ? `${+C.dd} ${mon} ${C.yyyy}` : '' });
+  return { H, C };
+}
+
 /** The template context for one design: { v, L } / { v, G } / { v, L, H }. */
 export function contextFor(design, v, x = {}) {
   switch (design) {
@@ -193,6 +203,7 @@ export function contextFor(design, v, x = {}) {
     case 'indian':   return { v, L: indian(v, x) };
     case 'birthday': return { v, ...birthday(v, x) };
     case 'carnival': return { v, ...carnival(v, x) };
+    case 'flight': return { v, ...flight(v, x) };
     default:         return { v };
   }
 }

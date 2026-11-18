@@ -194,7 +194,7 @@ h1 em{display:inline-block;text-shadow:0 0 0 rgba(200,146,58,0);animation:fxg 3.
 var $=function(s){return document.querySelector(s)};
 var S={type:'',design:'',names:'',iso:'',tm:'17:00',venue:'',age:'5',host:''},ME=null;
 var DES={wedding:[{k:'lace',n:'Pearl Lace',d:'Soft ivory, wax seal, pearls',c:'linear-gradient(135deg,#f3ece4,#e2d6ca)'},{k:'garden',n:'Garden Bloom',d:'Blue sky, white flower arch',c:'linear-gradient(135deg,#bcd8ee,#8aa874)'},{k:'indian',n:'Royal Indian',d:'Palace doors, marigolds, diyas',c:'linear-gradient(135deg,#8d1a30,#d9a93f)'}],
- birthday:[{k:'birthday',n:'Party Pop',d:'Gift box, balloons, confetti',c:'linear-gradient(135deg,#7b3fe4,#ff6fa8)'},{k:'carnival',n:'Carnival Magic',d:'Circus tents, balloons, elephant',c:'linear-gradient(135deg,#f4c9d1,#c9964f)'}]};
+ birthday:[{k:'birthday',n:'Party Pop',d:'Gift box, balloons, confetti',c:'linear-gradient(135deg,#7b3fe4,#ff6fa8)'},{k:'carnival',n:'Carnival Magic',d:'Circus tents, balloons, elephant',c:'linear-gradient(135deg,#f4c9d1,#c9964f)'},{k:'flight',n:'Birthday Flight',d:'Boarding pass, clouds, fireworks',c:'linear-gradient(135deg,#2f9bff,#ff7a3d)'}]};
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 function api(path,body){return window.hostApi(path,body)}
 function plus(n){var d=new Date();d.setDate(d.getDate()+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
