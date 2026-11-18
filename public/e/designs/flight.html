@@ -170,7 +170,7 @@ input,textarea{font:500 1.02rem Outfit;padding:.8rem 1rem;border-radius:10px;bor
 <script>
 /* ===== EDIT HERE: event details (or open the page with ?edit=1) ===== */
 const ED=document.getElementById('evd').dataset;
-const CONFIG={name:ED.name||'Our guest of honour',date:ED.date||new Date().toISOString().slice(0,10),time:'Evening',venue:'Venue to be announced',address:'',mapUrl:'',musicUrl:'',hostWhatsApp:ED.whatsapp||'',photos:[],captions:['','','','','']};
+const CONFIG={name:ED.name||'Our guest of honour',date:ED.date||new Date().toISOString().slice(0,10),time:'Evening',venue:'Venue to be announced',address:'',mapUrl:'',musicUrl:'/w/flight/music.mp3',hostWhatsApp:ED.whatsapp||'',photos:[],captions:['','','','','']};
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const RM=matchMedia('(prefers-reduced-motion:reduce)').matches,HOST=false;if(HOST)document.body.classList.add('edit');
 const G=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},S=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return 1}catch(e){return 0}};
