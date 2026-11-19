@@ -44,14 +44,29 @@ export default async function invitePreview(request, context) {
     if (!out.ok) return page;
     const { v, ev } = out.data;
     const design = designOf(ev, v, (url.searchParams.get('t') || '').toLowerCase());
-    const image = new URL(`/w/og/${design}.jpg`, url).href;
-    const title = v.og_title || v.title || 'You\'re invited';
+    let image = new URL(`/w/og/${design}.jpg`, url).href;
+    /* an event can have its own preview picture: public/w/og/<JOIN CODE>.jpg (e.g. YMG119.jpg) */
+    try {
+      const own = new URL(`/w/og/${encodeURIComponent(v.code || code)}.jpg`, url);
+      const head = await withTimeout(fetch(own, { method: 'HEAD' }), 2000);
+      if (head.ok && /image/i.test(head.headers.get('content-type') || '')) image = own.href;
+    } catch (e) { /* no own picture: the design's picture is used */ }
+    let title = v.og_title || v.title || 'You\'re invited';
+    let description = v.description;
+    const when = [v.date_text, v.venue_name].filter(Boolean).join(' · ');
+    if (design === 'flight') {                       // boarding-pass birthday
+      title = `✈️ Boarding Pass: ${v.title || 'Birthday'}`;
+      description = `You're invited!${when ? ' ' + when + '.' : ''} Tap to check in & send your birthday wishes 🎉`;
+    } else if (design === 'carnival') {              // carnival birthday
+      title = `🎪 You're invited: ${v.title || 'Birthday'}`;
+      description = `Join us${when ? ': ' + when + '.' : '.'} Open your invitation & send your birthday wishes 💕`;
+    }
     const meta = `<title>${esc(v.title)}</title>
-<meta name="description" content="${esc(v.description)}">
+<meta name="description" content="${esc(description)}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="EventNest">
 <meta property="og:title" content="${esc(title)}">
-<meta property="og:description" content="${esc(v.description)}">
+<meta property="og:description" content="${esc(description)}">
 <meta property="og:url" content="${esc(url.origin + url.pathname)}">
 <meta property="og:image" content="${esc(image)}">
 <meta property="og:image:width" content="1200">
