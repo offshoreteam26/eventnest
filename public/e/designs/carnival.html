@@ -277,7 +277,7 @@ let tx0=0,ty0=0;lb.addEventListener('touchstart',e=>{tx0=e.touches[0].clientX;ty
 function shrink(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1200/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.src=r.result};r.readAsDataURL(file)}
 function hp(){$('#hp').innerHTML=Array.from({length:NS},(_,i)=>`<div>#${i+1} ${photo(i)?'✓':'–'} <input type="file" accept="image/*" data-i="${i}"></div>`).join('')}
 $('#hp').onchange=e=>{const i=+e.target.dataset.i,f=e.target.files[0];if(!f)return;shrink(f,d=>{UP[i]=d;try{localStorage.setItem('hm_ph6',JSON.stringify(UP))}catch(x){toast('Shown now, but browser storage is full')}gal();hp()})};
-gal();hp();(async()=>{const u=[1,2,3,4,5].map(n=>'/w/carnival/photo'+n+'.jpg');const ok=await Promise.all(u.map(x=>new Promise(r=>{const m=new Image();m.onload=()=>r(x);m.onerror=()=>r(null);m.src=x})));if(ok.some(Boolean)){CONFIG.photos=ok;gal();hp()}})();
+gal();hp();(async()=>{const u=[1,2,3,4,5].map(n=>'/w/carnival/photo'+n+'.jpg?v=1');const ok=await Promise.all(u.map(x=>new Promise(r=>{const m=new Image();m.onload=()=>r(x);m.onerror=()=>r(null);m.src=x})));if(ok.some(Boolean)){CONFIG.photos=ok;gal();hp()}})();
 /* --- venue --- */
 function apply2(){const v=CF.venue&&CF.venue!=CONFIG.venue,a=CF.address,has=v||a,q=encodeURIComponent([v?CF.venue:'',a].filter(Boolean).join(', '));
  $('#vnm').textContent=v?CF.venue:'Venue to be announced';$('#vad').textContent=a||'Full address will be shared soon';
